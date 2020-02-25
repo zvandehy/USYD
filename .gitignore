@@ -68,7 +68,7 @@ build/
 
 #Does this fix? - Zeke
 .idea
-
+.iml
 
 # Generated files
 .idea/**/contentModel.xml
