@@ -212,4 +212,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+
+#VSCode
+.settings
+.classpath
+.project
+
 # End of https://www.gitignore.io/api/macos,windows,flutter,intellij,visualstudiocode
