@@ -225,6 +225,7 @@ public class AppTest {
 
     @Test public void clear() {
         ShoppingBasket basket = new ShoppingBasket();
+        fail();
 
     }
 }
