@@ -42,9 +42,7 @@ public class Blockchain {
     public int addTransaction(String txString) {
         Transaction transaction;
         try {
-            String sender = txString.substring(3,11);
-            String content = txString.substring(12);
-            transaction = new Transaction(sender, content);
+            transaction = new Transaction(txString);
         } catch(Exception e) {
             return 0;
         }
@@ -62,8 +60,7 @@ public class Blockchain {
         Block newBlock = new Block();
         newBlock.setTransactions(pool);
         if(length == 0) {
-            //todo: Fix setting previousHash to 0. There is a temporary workaround in Block.java
-            newBlock.setPreviousHash(null);
+            newBlock.setPreviousHash(new byte[32]);
             newBlock.setPreviousBlock(null);
         }
         else {

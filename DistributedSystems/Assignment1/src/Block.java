@@ -37,14 +37,8 @@ public class Block {
 
     public String toString() {
         String cutOffRule = new String(new char[81]).replace("\0", "-") + "\n";
-        String prevHashString;
-        if (previousHash == null) {
-            prevHashString = String.format("|PreviousHash:|%65s|\n",
-                    0);
-        }else {
-            prevHashString = String.format("|PreviousHash:|%65s|\n",
+        String prevHashString = String.format("|PreviousHash:|%65s|\n",
                     Base64.getEncoder().encodeToString(previousHash));
-        }
         String hashString = String.format("|CurrentHash:|%66s|\n",
                 Base64.getEncoder().encodeToString(calculateHash()));
         String transactionsString = "";
@@ -69,15 +63,10 @@ public class Block {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream dos = new DataOutputStream(baos);
 
-            if(previousHash == null) {
-                dos.write(0);
-            }
-            else {
-                dos.write(previousHash);
-            }
+            dos.write(previousHash);
 
             for (Transaction transaction : transactions) {
-                String txString = transaction.toString();
+                String txString = "tx|" + transaction.getSender() + "|" + transaction.getContent();
                 dos.writeUTF(txString);
             }
 

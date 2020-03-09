@@ -3,12 +3,14 @@ public class Transaction {
     private String sender;
     private String content;
 
-
-    //Todo: Make sure that it's okay to use a constructor instead of the setters
-    public Transaction(String sender, String content) throws IllegalArgumentException {
-        if (sender.matches("[a-z]{4}[0-9]{4}") && content.length() <= 70 && !content.contains("|")) {
-            this.sender = sender;
-            this.content = content;
+    //constructor
+    public Transaction(String txString) throws IllegalArgumentException {
+        String header = txString.substring(0,3);
+        String sender = txString.substring(3,11);
+        String content = txString.substring(12);
+        if (header.equals("tx|") && sender.matches("[a-z]{4}[0-9]{4}") && content.length() <= 70 && !content.contains("|")) {
+            setSender(sender);
+            setContent(content);
         }
         else throw new IllegalArgumentException("Sender must match uni-key format, content must contain 70 or less characters, and content may not contain '|'");
     }
