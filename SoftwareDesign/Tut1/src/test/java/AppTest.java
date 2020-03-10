@@ -8,8 +8,6 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
 
 public class AppTest {
 
@@ -68,12 +66,6 @@ public class AppTest {
         }
 
         //testing number format exception
-//        try {
-//            basket.addItem(grocery1,1.5);
-//            fail("Should not reach. NumberException should be caught");
-//        } catch(Exception e) {
-//            assertTrue(e instanceof NumberFormatException);
-//        }
         try {
             basket.addItem(grocery1,-1);
             fail("Should not reach. NumberException should be caught");
@@ -123,25 +115,16 @@ public class AppTest {
         assertTrue(basket.removeItem(grocery3, 2));
         assertTrue(basket.getItems().isEmpty());
 
-//        //testing Invalid Argument Exception
-//        try {
-//            basket.removeItem("", 1);
-//            fail("Should not reach. Illegal Argument Exception should be thrown");
-//        } catch (Exception e) {
-//            assertTrue(e instanceof IllegalArgumentException);
-//        }
-//        try {
-//            basket.removeItem("other grocery item", 1);
-//            fail("Should not reach. Invalid Argument Exception should be thrown");
-//        } catch (Exception e) {
-//            assertTrue(e instanceof IllegalArgumentException);
-//        }
-//        try {
-//            basket.removeItem(null, 1);
-//            fail("Should not reach. Invalid Argument Exception should be thrown");
-//        } catch (Exception e) {
-//            assertTrue(e instanceof IllegalArgumentException);
-//        }
+        //testing invalid inputs
+        assertFalse(basket.removeItem("", 1));
+        assertFalse(basket.removeItem("other grocery item", 1));
+        //testing illegal argument exception
+        try {
+            basket.removeItem(null, 1);
+            fail("Should not reach. Illegal Argument Exception should be thrown");
+        } catch (Exception e) {
+            assertTrue(e instanceof IllegalArgumentException);
+        }
 
         //testing number format exception
         try {
@@ -156,12 +139,6 @@ public class AppTest {
         } catch (Exception e) {
             assertTrue(e instanceof IllegalArgumentException);
         }
-//        try {
-//            basket.removeItem(grocery1, .5);
-//            fail("Should not reach. Number Format Exception should be thrown");
-//        } catch (Exception e) {
-//            assertTrue(e instanceof NumberFormatException);
-//        }
 
     }
 

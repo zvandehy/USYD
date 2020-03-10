@@ -20,6 +20,10 @@ repositories {
     jcenter()
 }
 
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:28.1-jre'
@@ -30,5 +34,5 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClassName = 'Tut2.App'
+    mainClassName = 'App'
 }
