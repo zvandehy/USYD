@@ -23,7 +23,7 @@ public class Block {
         return previousHash;
     }
     public ArrayList<Transaction> getTransactions() {
-        return transactions;
+        return this.transactions;
     }
     public void setPreviousBlock(Block previousBlock) {
         this.previousBlock = previousBlock;
@@ -45,6 +45,7 @@ public class Block {
         for (Transaction tx : transactions) {
             transactionsString += tx.toString();
         }
+
         return "Block:\n"
                 + cutOffRule
                 + hashString

@@ -49,7 +49,6 @@ public class Blockchain {
         pool.add(transaction);
         if(pool.size() >= 3) {
             commitPool();
-            length++;
             return 2;
         }
         return 1;
@@ -67,7 +66,8 @@ public class Blockchain {
             newBlock.setPreviousBlock(head);
             newBlock.setPreviousHash(head.calculateHash());
         }
-        head = newBlock;
-        pool.clear();
+        setHead(newBlock);
+        setLength(getLength()+1);
+        setPool(new ArrayList<>());
     }
 }
