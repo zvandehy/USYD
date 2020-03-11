@@ -14,6 +14,11 @@ plugins {
     id 'application'
 }
 
+javafx {
+    version = "12.0.2"
+    modules = [ 'javafx.controls', 'javafx.media' ]
+}
+
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
@@ -30,5 +35,5 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClassName = 'store.App'
+    mainClassName = 'App'
 }
