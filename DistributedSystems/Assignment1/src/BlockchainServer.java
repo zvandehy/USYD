@@ -4,11 +4,11 @@ import java.net.Socket;
 
 public class BlockchainServer {
     private Blockchain blockchain;
-    public BlockchainServer() {blockchain = new Blockchain();}
+    public BlockchainServer() {this.blockchain = new Blockchain();}
 
     //getters and setters
     public void setBlockchain(Blockchain blockchain) { this.blockchain = blockchain;}
-    public Blockchain getBlockchain() { return blockchain;}
+    public Blockchain getBlockchain() { return this.blockchain;}
 
     public static void main(String[] args) {
         if (args.length != 1) {
@@ -19,10 +19,11 @@ public class BlockchainServer {
         try {
             ServerSocket server = new ServerSocket(portNumber);
             while(true) {
-                Socket socket = server.accept();
-                InputStream input = socket.getInputStream();
-                OutputStream output = socket.getOutputStream();
+                Socket client = server.accept();
+                InputStream input = client.getInputStream();
+                OutputStream output = client.getOutputStream();
                 bcs.serverHandler(input, output);
+                client.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,34 +37,31 @@ public class BlockchainServer {
         BufferedReader inputReader = new BufferedReader(
                 new InputStreamReader(clientInputStream));
         PrintWriter outWriter = new PrintWriter(clientOutputStream, true);
-
         //my code
-        while(true){
-            try {
-                String request = inputReader.readLine();
-                if (request.substring(0, 2).equals("tx")) {
-                    System.out.println("Handle tx");
-//                    if(blockchain.addTransaction(request) > 0) {
-//                        System.out.print("Accepted\n\n");
-//                    } else {
-//                        System.out.print("Rejected\n\n");
-//                    }
+        String request = "";
+        try {
+            do {
+                request = inputReader.readLine();
+                if (request == null) break;
+                if (request.length() < 2) {
+                    outWriter.println("Error\n\n");
+                } else if (request.substring(0, 2).equals("tx")) {
+                    if (blockchain.addTransaction(request) > 0) {
+                        outWriter.println("Accepted\n\n");
+                    } else {
+                        outWriter.println("Rejected\n\n");
+                    }
                 } else if (request.equals("pb")) {
-                    System.out.println("Handle pb");
-//                    System.out.print(blockchain.toString() + "\n");
+                    outWriter.println(blockchain.toString() + "\n");
                 } else if (request.equals("cc")) {
-                    System.out.println("Handle cc");
-//                    socket.close();
                     break;
                 } else {
-                    System.out.println("Handle error");
-//                    System.out.print("Error\n\n");
+                    outWriter.println("Error\n\n");
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-
-            }
         }
-
+        while (inputReader.ready()) ;
+    }catch (IOException e) {
+        e.printStackTrace();
+    }
     }
 }
