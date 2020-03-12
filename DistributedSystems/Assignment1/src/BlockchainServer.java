@@ -44,22 +44,23 @@ public class BlockchainServer {
                 request = inputReader.readLine();
                 if (request == null) break;
                 if (request.length() < 2) {
-                    outWriter.println("Error\n\n");
+                    outWriter.println("Error\n");
                 } else if (request.substring(0, 2).equals("tx")) {
                     if (blockchain.addTransaction(request) > 0) {
-                        outWriter.println("Accepted\n\n");
+                        outWriter.print("Accepted\n\n");
+                        outWriter.flush();
                     } else {
-                        outWriter.println("Rejected\n\n");
+                        outWriter.println("Rejected\n");
                     }
                 } else if (request.equals("pb")) {
-                    outWriter.println(blockchain.toString() + "\n");
+                    outWriter.println(blockchain.toString());
                 } else if (request.equals("cc")) {
                     break;
                 } else {
-                    outWriter.println("Error\n\n");
+                    outWriter.println("Error\n");
                 }
         }
-        while (inputReader.ready()) ;
+        while (!request.equals("cc")) ;
     }catch (IOException e) {
         e.printStackTrace();
     }
