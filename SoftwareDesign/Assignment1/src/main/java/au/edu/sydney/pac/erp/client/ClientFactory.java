@@ -19,4 +19,9 @@ public class ClientFactory {
        would be sufficient for both.
      */
 
+    public ClientList makeClientList() {
+        ClientList clients = new ClientListImpl();
+        return clients;
+    }
+
 }

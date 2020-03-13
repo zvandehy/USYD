@@ -99,34 +99,46 @@ public class ClientImplTest {
         assertEquals("001", client.getDepartmentCode());
         assertTrue(client.isAssigned());
     }
-    @Test (expected = IllegalStateException.class)
+    @Test
     public void assignDepartment_AlreadyAssigned() {
         Client client = new ClientImpl(1, "first", "last", "1234567890");
 
         client.assignDepartment("001");
         assertTrue(client.isAssigned());
         //assign department to assigned client should fail
-        client.assignDepartment("002");
+        try {
+            client.assignDepartment("002");
+        } catch (Exception e) {
+            assertTrue(e instanceof IllegalStateException);
+        }
         //department should not change
         assertEquals("001", client.getDepartmentCode());
         assertTrue(client.isAssigned());
     }
-    @Test (expected = IllegalArgumentException.class)
+    @Test
     public void assignDepartment_EmptyDepartment() {
         //check empty inputs on unassigned client
         Client client = new ClientImpl(1, "first", "last", "1234567890");
         //department code can't be empty
-        client.assignDepartment("");
+        try {
+            client.assignDepartment("");
+        } catch (Exception e) {
+            assertTrue(e instanceof IllegalArgumentException);
+        }
         //shouldn't assign department
         assertNull(client.getDepartmentCode());
         assertFalse(client.isAssigned());
     }
-    @Test (expected = IllegalArgumentException.class)
+    @Test
     public void assignDepartment_NullDepartment() {
         //check nul department code on unassigned client
         Client client = new ClientImpl(1, "first", "last", "1234567890");
         //department code can't be null
-        client.assignDepartment(null);
+        try {
+            client.assignDepartment(null);
+        } catch (Exception e) {
+            assertTrue(e instanceof IllegalArgumentException);
+        }
         //shouldn't assign department
         assertNull(client.getDepartmentCode());
         assertFalse(client.isAssigned());
