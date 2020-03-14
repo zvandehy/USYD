@@ -12,8 +12,6 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class FEAAFacadeImplTest {
-    //TODO: Test with .jar
-
     //create FEAAFacadeImpl with clientProvider and 5 valid clients
     private FEAAFacadeImpl setup() {
         FEAAFacadeImpl feaa = new FEAAFacadeImpl();
@@ -227,9 +225,9 @@ public class FEAAFacadeImplTest {
         assertTrue(feaa.getAllClients().get(1).isAssigned());
         assertTrue(feaa.getAllClients().get(2).isAssigned());
         //verify department code is correct
-        assertEquals("DOM", feaa.getAllClients().get(0).getDepartmentCode());
-        assertEquals("INT", feaa.getAllClients().get(1).getDepartmentCode());
-        assertEquals("LRG", feaa.getAllClients().get(2).getDepartmentCode());
+        assertEquals("DOMESTIC", feaa.getAllClients().get(0).getDepartmentCode());
+        assertEquals("INTERNATIONAL", feaa.getAllClients().get(1).getDepartmentCode());
+        assertEquals("LARGE ACCOUNTS", feaa.getAllClients().get(2).getDepartmentCode());
     }
 
 
@@ -286,7 +284,7 @@ public class FEAAFacadeImplTest {
 
 
         FEAAFacadeImpl feaa = setup();
-        ArrayList<Client> returnedClients = (ArrayList<Client>) feaa.getAllClients();
+        ArrayList<Client> returnedClients = new ArrayList<Client>(feaa.getAllClients());
         ArrayList<String> returnedClientFirstNames = new ArrayList<>();
         for(Client client: returnedClients) {
             returnedClientFirstNames.add(client.getFirstName());
@@ -333,7 +331,7 @@ public class FEAAFacadeImplTest {
             feaa.addAccount(null, feaa.getAllClients().get(1).getID(), "accountName", 0,0);
             fail("Should throw exception when client ID is null after not-null id was provided");
         } catch(Exception e) {
-            assertTrue(e instanceof IllegalArgumentException);
+            assertTrue(e instanceof IllegalStateException);
         }
     }
     @Test
@@ -407,11 +405,11 @@ public class FEAAFacadeImplTest {
         //verify 5 accounts were added
         assertEquals(5,feaa.getAccounts().size());
         //verify the correct account was created
-        String account1 = "1:Account 1";
-        String account2 = "2:Account 2";
-        String account3 = "3:Account 3";
-        String account4 = "4:Account 4";
-        String account5 = "5:Account 5";
+        String account1 = "1: Account 1";
+        String account2 = "2: Account 2";
+        String account3 = "3: Account 3";
+        String account4 = "4: Account 4";
+        String account5 = "5: Account 5";
 
         assertTrue(feaa.getAccounts().contains(account1));
         assertTrue(feaa.getAccounts().contains(account2));
@@ -479,13 +477,13 @@ public class FEAAFacadeImplTest {
     @Test
     public void testGetAccounts_NoParameter_Valid() {
         FEAAFacadeImpl feaa = setup2();
-        String account1 = "1:Account 1";
-        String account2 = "2:Account 2";
-        String account3 = "3:Account 3";
-        String account4 = "4:Account 4";
-        String account5 = "5:Account 5";
-        String account6 = "6:Account 1b";
-        String account7 = "7:Account 1c";
+        String account1 = "1: Account 1";
+        String account2 = "2: Account 2";
+        String account3 = "3: Account 3";
+        String account4 = "4: Account 4";
+        String account5 = "5: Account 5";
+        String account6 = "6: Account 1b";
+        String account7 = "7: Account 1c";
 
         assertEquals(7,feaa.getAccounts().size());
         assertTrue(feaa.getAccounts().contains(account1));
@@ -616,13 +614,13 @@ public class FEAAFacadeImplTest {
     @Test
     public void testGetAccountName_Valid() {
         FEAAFacadeImpl feaa = setup2();
-        String account1 = "1:Account 1";
-        String account2 = "2:Account 2";
-        String account3 = "3:Account 3";
-        String account4 = "4:Account 4";
-        String account5 = "5:Account 5";
-        String account6 = "6:Account 1b";
-        String account7 = "7:Account 1c";
+        String account1 = "Account 1";
+        String account2 = "Account 2";
+        String account3 = "Account 3";
+        String account4 = "Account 4";
+        String account5 = "Account 5";
+        String account6 = "Account 1b";
+        String account7 = "Account 1c";
 
         assertEquals(account1, feaa.getAccountName(1));
         assertEquals(account2, feaa.getAccountName(2));
@@ -685,12 +683,23 @@ public class FEAAFacadeImplTest {
     public void testGetAccountBalance_AfterChanged() {
         FEAAFacadeImpl feaa = setup();
 
-        feaa.addAccount(1, feaa.getAllClients().get(0).getID(),"Account 1", 100,50);
+        int accountId = feaa.addAccount(1, feaa.getAllClients().get(0).getID(),"Account 1", 100,50);
         assertEquals(50, feaa.getAccountBalance(1));
 
         //change incomings and outgoings
-        feaa.setAccountOutgoings(1,100);
-        feaa.setAccountIncomings(1,200);
+        try {
+            feaa.setAccountOutgoings(accountId,100);
+            fail("This implementation should expect the exception AND the mutation");
+        } catch(Exception e) {
+            assertTrue(e instanceof IllegalStateException);
+        }
+        try {
+            feaa.setAccountIncomings(accountId,200);
+            fail("This implementation should expect the exception AND the mutation");
+        } catch(Exception e) {
+            assertTrue(e instanceof IllegalStateException);
+        }
+
         assertEquals(100,feaa.getAccountBalance(1));
     }
 
@@ -794,11 +803,14 @@ public class FEAAFacadeImplTest {
     @Test
     public void testSetAccountIncomings_Valid() {
         FEAAFacadeImpl feaa = setup();
-
         feaa.addAccount(1, feaa.getAllClients().get(0).getID(),"Account 1", 0,50);
-
         assertEquals(0, feaa.getAccountIncomings(1));
-        feaa.setAccountIncomings(1,100);
+        try {
+            feaa.setAccountIncomings(1,100);
+            fail("This implementation should expect the exception AND the mutation");
+        } catch(Exception e) {
+            assertTrue(e instanceof IllegalStateException);
+        }
         assertEquals(100, feaa.getAccountIncomings(1));
     }
     @Test
@@ -841,10 +853,14 @@ public class FEAAFacadeImplTest {
     public void setAccountOutgoings_Valid() {
         FEAAFacadeImpl feaa = setup();
 
-        feaa.addAccount(1, feaa.getAllClients().get(0).getID(),"Account 1", 50,0);
-
-        assertEquals(0, feaa.getAccountOutgoings(1));
-        feaa.setAccountOutgoings(1,100);
+        feaa.addAccount(1, feaa.getAllClients().get(0).getID(),"Account 1", 50,10);
+        assertEquals(10, feaa.getAccountOutgoings(1));
+        try {
+            feaa.setAccountOutgoings(1,100);
+            fail("This implementation should expect the exception AND the mutation");
+        } catch(Exception e) {
+            assertTrue(e instanceof IllegalStateException);
+        }
         assertEquals(100, feaa.getAccountOutgoings(1));
     }
     @Test
@@ -909,7 +925,7 @@ public class FEAAFacadeImplTest {
             feaa.addAccount(null, feaa.getAllClients().get(1).getID(),"Account 2", 100,50);
             fail("Should throw exception when null ID state is violated. Error in addAccount()");
         } catch(Exception e) {
-            assertTrue("addAccount() error",e instanceof IllegalArgumentException);
+            assertTrue("addAccount() error", e instanceof IllegalStateException);
         }
         //reset Null ID state
         feaa.setClientProvider(new ClientListImpl());
