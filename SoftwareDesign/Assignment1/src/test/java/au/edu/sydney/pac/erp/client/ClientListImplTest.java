@@ -9,11 +9,9 @@ import static org.junit.Assert.assertEquals;
 
 public class ClientListImplTest {
 
-    //todo: how should I be utilizing the factory?
-
     @Test
     public void testAddClient_InvalidID() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         //test invalid id input
         try {
             Client client = clientList.addClient(0, "firstName", "lastName", "phoneNumber");
@@ -32,7 +30,7 @@ public class ClientListImplTest {
     }
     @Test
     public void testAddClient_DuplicateID() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
 
         Client client = clientList.addClient(1, "firstName", "lastName", "phoneNumber");
         try {
@@ -46,7 +44,7 @@ public class ClientListImplTest {
     }
     @Test
     public void testAddClient_InvalidFirstName() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         //test invalid firstName input
         try {
             Client client = clientList.addClient(1, "", "lastName", "phoneNumber");
@@ -65,7 +63,7 @@ public class ClientListImplTest {
     }
     @Test
     public void testAddClient_InvalidLastName() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         //test invalid lastName input
         try {
             Client client = clientList.addClient(1, "firstName", "", "phoneNumber");
@@ -84,7 +82,7 @@ public class ClientListImplTest {
     }
     @Test
     public void testAddClient_InvalidPhoneNumber() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         //test invalid phoneNumber input
         try {
             Client client = clientList.addClient(1, "firstName", "lastName", "");
@@ -103,7 +101,7 @@ public class ClientListImplTest {
     }
     @Test
     public void testAddClient_Valid(){
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         Client client = clientList.addClient(10, "first", "last", "1234567890");
         //verify that the client was created
         assertEquals(10, client.getID());
@@ -117,12 +115,12 @@ public class ClientListImplTest {
 
     @Test
     public void clear_EmptyBefore() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         clientList.clear();
         assertTrue(clientList.findAll().isEmpty());
     }@Test
     public void clear_NotEmptyBefore() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         for(int i=1;i<=10;i++) {
             clientList.addClient(i,"first"+i, "last"+i, "phone"+i);
         }
@@ -133,7 +131,7 @@ public class ClientListImplTest {
 
     @Test
     public void findAll_NoParameter_Valid() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         for(int i=1;i<=10;i++) {
             clientList.addClient(i,"first"+i, "last"+i, "phone"+i);
         }
@@ -144,13 +142,13 @@ public class ClientListImplTest {
     }
     @Test
     public void findAll_NoParameter_Empty() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         assertTrue(clientList.findAll().isEmpty());
     }
 
     @Test
     public void findAll_Assigned_Valid() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         Client client;
         for(int i=1;i<=10;i++) {
             client = clientList.addClient(i,"first"+i, "last"+i, "phone"+i);
@@ -171,7 +169,7 @@ public class ClientListImplTest {
     }
     @Test
     public void findAll_Assigned_Empty() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         clientList.addClient(1,"first", "last", "1234567890");
         //can't find client in 'true' assigned search
         assertFalse(clientList.findAll(true).contains(clientList.findOne(1)));
@@ -184,7 +182,7 @@ public class ClientListImplTest {
 
     @Test
     public void findAll_Department_OnlySearchForOneDepartment() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         Client client;
         client = clientList.addClient(1,"first", "last", "1234567890");
         client.assignDepartment("1");
@@ -205,7 +203,7 @@ public class ClientListImplTest {
     }
     @Test
     public void findAll_Department_SearchMultipleDepartments() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         Client client;
         //Note that clients in the same department are not adjacent
         client = clientList.addClient(1,"first", "last", "1234567890");
@@ -236,7 +234,7 @@ public class ClientListImplTest {
     }
     @Test
     public void findAll_Department_Empty() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         clientList.addClient(1,"first", "last", "1234567890");
         clientList.addClient(2,"first", "last", "1234567890");
         Client client = clientList.addClient(3,"first", "last", "1234567890");
@@ -247,7 +245,7 @@ public class ClientListImplTest {
 
     @Test
     public void findOne_Valid() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         Client client;
         for(int i=1;i<=10;i++) {
             client = clientList.addClient(i,"first"+i, "last"+i, "phone"+i);
@@ -262,13 +260,13 @@ public class ClientListImplTest {
     }
     @Test
     public void findOne_NoMatchFound() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         clientList.addClient(1,"first","last","1234567890");
         assertNull(clientList.findOne(2));
     }
     @Test
     public void findOne_ZeroID() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         clientList.addClient(1,"first","last","1234567890");
         try {
             clientList.findOne(0);
@@ -280,7 +278,7 @@ public class ClientListImplTest {
 
     @Test
     public void findOne_NegativeID() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         clientList.addClient(1,"first","last","1234567890");
         try {
             assertNull(clientList.findOne(-1));
@@ -292,7 +290,7 @@ public class ClientListImplTest {
 
     @Test
     public void remove_Valid() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         for(int i=1;i<=10;i++) {
             clientList.addClient(i,"first"+i,"last"+i,"phone"+i);
         }
@@ -317,13 +315,13 @@ public class ClientListImplTest {
     }
     @Test
     public void remove_NoMatchFound() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         clientList.addClient(1,"first","last","1234567890");
         assertFalse(clientList.remove(2));
     }
     @Test
     public void remove_ZeroID() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         clientList.addClient(1,"first","last","1234567890");
         try {
             clientList.remove(0);
@@ -335,7 +333,7 @@ public class ClientListImplTest {
 
     @Test
     public void remove_NegativeID() {
-        ClientListImpl clientList = new ClientListImpl();
+        ClientList clientList = new ClientFactory().makeClientList();
         clientList.addClient(1,"first","last","1234567890");
         try {
             clientList.remove(-1);

@@ -13,7 +13,6 @@ public class ClientListImpl implements ClientList {
 
     @Override
     public Client addClient(int id, String firstName, String lastName, String phoneNumber) throws IllegalStateException, IllegalArgumentException {
-        //todo: Should I leave these parameter checks to the ClientImpl?
         if(id <= 0) {
             throw new IllegalArgumentException();
         } else if(findOne(id) != null) {
