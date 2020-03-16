@@ -14,6 +14,7 @@ public abstract class Game {
         this.goal = goal;
         this.forbidden = forbidden;
         this.fringe = root.filteredChildren(forbidden);
+        System.out.println("INITIALIZE  " + fringe);
         this.expanded = new LinkedList<>();
         expanded.add(root);
         this.solution = new LinkedList<>();

@@ -8,18 +8,21 @@ public class BreadthFirstSearch extends Game {
 
     @Override
     public int step() {
-        if(fringe.size() == 0) {
+        Node node;
+        try {
+            //get first node in fringe
+            node = fringe.remove(0);
+            //if node has same digits and if node has same lastMove (and thus has same children)
+            //todo: It may not be enough to only check lastMove because of root,
+            //may need to check if children of each node in E contain all children in node
+            while(expanded.contains(node)) {
+                //move on to next node in fringe
+                node = fringe.remove(0);
+            }
+        } catch(IndexOutOfBoundsException e) {
             return -1;
         }
-        //get first node in fringe
-        Node node = fringe.remove(0);
-        //if node has same digits and if node has same lastMove (and thus has same children)
-        //todo: It may not be enough to only check lastMove because of root,
-        //may need to check if children of each node in E contain all children in node
-        while(expanded.contains(node)) {
-            //move on to next node in fringe
-            node = fringe.remove(0);
-        }
+
         //now node is valid
         expanded.add(node);
         //stop if node is a goal

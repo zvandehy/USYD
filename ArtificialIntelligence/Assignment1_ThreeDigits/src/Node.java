@@ -6,12 +6,18 @@ public class Node {
     Node parent;
     List<Node> children;
     int lastMove;
+    int depth;
 
     public Node(String digits, Node parent, int lastMove) {
         this.digits = digits;
         this.parent = parent;
         this.lastMove = lastMove;
         children = new LinkedList<>();
+        if(parent == null) {
+            depth = 0;
+        } else {
+            depth = parent.depth + 1;
+        }
     }
 
     //these methods add the 2 children for adjusting each position of digits
@@ -79,10 +85,10 @@ public class Node {
                 adjustDigit1();
                 adjustDigit2();
                 adjustDigit3();
+                break;
         }
         children.removeIf(child -> forbidden.contains(child.digits));
-        return (LinkedList<Node>) children;
-
+        return new LinkedList<>(children);
     }
 
     @Override
