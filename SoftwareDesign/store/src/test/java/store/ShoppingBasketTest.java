@@ -3,6 +3,7 @@
  */
 package store;
 
+import javafx.util.Pair;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -20,6 +21,7 @@ public class ShoppingBasketTest {
         product2 = new Product("Chocolate Chip", .01);
         product3 = new Product("Enchiladas", 13.01);
         product4 = new Product("Cheese", 100.0);
+
     }
     //Test Constructor
     @Test public void testShoppingBasketConstructor() {
