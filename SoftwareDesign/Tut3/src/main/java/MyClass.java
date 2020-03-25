@@ -1,5 +1,3 @@
-package tut3;
-
 public class MyClass {
     private MyDependency myDependency;
 
@@ -7,7 +5,13 @@ public class MyClass {
         this.myDependency = myDependency;
     }
 
-    public String doSomething() {
-        return myDependency.getString();
+    public String doSomething(boolean bool) {
+        myDependency.getInt();
+        myDependency.doThis();
+        if (myDependency.getString(bool) == null) {
+            return "one thing";
+        } else {
+            return "another thing";
+        }
     }
 }
