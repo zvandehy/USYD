@@ -10,17 +10,20 @@ public class InventoryImpl implements Inventory {
     private List<Product> products;
     private List<Pair<Product, Integer>> items;
 
-    @Override
-    public Inventory getInstance() {
+    public InventoryImpl() {
+        this.products = new ArrayList<>();
+        this.items = new ArrayList<>();
+    }
+
+    //todo: Do we need this? If so, do we include it in the interface?
+    public static Inventory getInstance() {
         if(instance == null) {
             instance = new InventoryImpl();
-            products = new ArrayList<>();
-            items = new ArrayList<>();
-            return instance;
-        } else {
-            return instance;
         }
+        return instance;
     }
+
+
 
     @Override
     public void addProduct(Product product, int quantity) throws IllegalArgumentException {

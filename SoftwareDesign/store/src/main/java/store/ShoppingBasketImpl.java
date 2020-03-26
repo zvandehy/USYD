@@ -19,16 +19,21 @@ public class ShoppingBasketImpl implements ShoppingBasket{
         if(product == null) throw new IllegalArgumentException("product cannot be null");
         if(!(quantity >= 1)) throw new IllegalArgumentException(("quantity must be one or more"));
 
+        boolean added = false;
         for(int i=0; i<items.size(); i++) {
             Pair<Product, Integer> pair = items.get(i);
             if(pair.getKey().equals(product)) {
                 Pair<Product, Integer> newPair = new Pair<>(pair.getKey(),pair.getValue()+quantity);
                 items.remove(i);
                 items.add(newPair);
-                value += product.getPrice() * quantity;
+                added = true;
                 break;
             }
         }
+        if(!added) {
+            items.add(new Pair<>(product,quantity));
+        }
+        value += product.getPrice() * quantity;
     }
 
     @Override

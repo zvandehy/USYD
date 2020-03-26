@@ -3,6 +3,8 @@ package store;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 public class InventoryTest {
 
     Product product1;
@@ -18,16 +20,17 @@ public class InventoryTest {
         product3 = new Product("Enchiladas", 13.01);
         product4 = new Product("Cheese", 100.0);
         inventoryTestProduct = new Product("Happiness", 100.0);
+        new InventoryImpl();
     }
 
     @Test
     public void getInstanceTest() {
-        assertNotNull(Inventory.getInstance());
+        assertNotNull(InventoryImpl.getInstance());
     }
 
     @Test
     public void testAddProduct_MultipleOfOneProduct() {
-        Inventory inventory = Inventory.getInstance();
+        Inventory inventory = InventoryImpl.getInstance();
         inventory.addProduct(product1, 1);
         assertEquals(1,inventory.getProductQuantity(product1));
         inventory.addProduct(product1, 100);
@@ -35,10 +38,11 @@ public class InventoryTest {
         //must take the products to maintain inventory state in tests
         inventory.takeProduct(product1,101);
     }
+
     @Test
     public void testAddProduct_DistinctProducts() {
-        Inventory inventory = Inventory.getInstance();
-        inventroy.addProduct(product1, 1);
+        Inventory inventory = InventoryImpl.getInstance();
+        inventory.addProduct(product1, 1);
         assertEquals(1,inventory.getProductQuantity(product1));
         inventory.addProduct(product2, 100);
         assertEquals(100,inventory.getProductQuantity(product2));
@@ -51,22 +55,22 @@ public class InventoryTest {
     }
     @Test (expected = IllegalArgumentException.class)
     public void testAddProduct_NullProduct() {
-        Inventory inventory = Inventory.getInstance();
+        Inventory inventory = InventoryImpl.getInstance();
         inventory.addProduct(null,1);
     }
     @Test (expected = IllegalArgumentException.class)
     public void testAddProduct_ZeroQuantity() {
-        Inventory inventory = Inventory.getInstance();
+        Inventory inventory = InventoryImpl.getInstance();
         inventory.addProduct(product1,0);
     }
     @Test (expected = IllegalArgumentException.class)
     public void testAddProduct_NegativeQuantity() {
-        Inventory inventory = Inventory.getInstance();
+        Inventory inventory = InventoryImpl.getInstance();
         inventory.addProduct(product1,-1);
     }
     @Test
     public void testTakeProduct_PositiveQuantities() {
-        Inventory inventory = Inventory.getInstance();
+        Inventory inventory = InventoryImpl.getInstance();
         inventory.addProduct(product1, 1);
         inventory.takeProduct(product1,1);
         inventory.addProduct(product1, 100);
@@ -74,7 +78,7 @@ public class InventoryTest {
     }
     @Test (expected = IllegalArgumentException.class)
     public void testTakeProduct_ZeroQuantity() {
-        Inventory inventory = Inventory.getInstance();
+        Inventory inventory = InventoryImpl.getInstance();
         inventory.addProduct(product1, 1);
         inventory.takeProduct(product1,0);
         //remove to maintain inventory
@@ -82,7 +86,7 @@ public class InventoryTest {
     }
     @Test (expected = IllegalArgumentException.class)
     public void testTakeProduct_NegativeQuantity() {
-        Inventory inventory = Inventory.getInstance();
+        Inventory inventory = InventoryImpl.getInstance();
         inventory.addProduct(product1, 1);
         inventory.takeProduct(product1,-1);
         //remove to maintain inventory
@@ -90,7 +94,7 @@ public class InventoryTest {
     }
     @Test (expected = IllegalArgumentException.class)
     public void testTakeProduct_NullProduct() {
-        Inventory inventory = Inventory.getInstance();
+        Inventory inventory = InventoryImpl.getInstance();
         inventory.addProduct(product1, 1);
         inventory.takeProduct(null,1);
         //remove to maintain inventory
@@ -98,7 +102,7 @@ public class InventoryTest {
     }
     @Test (expected = IllegalStateException.class)
     public void testTakeProduct_QuantityOneHigherThanActual() {
-        Inventory inventory = Inventory.getInstance();
+        Inventory inventory = InventoryImpl.getInstance();
         inventory.addProduct(product1, 1);
         inventory.takeProduct(product1,2);
         //remove to maintain inventory
@@ -106,7 +110,7 @@ public class InventoryTest {
     }
     @Test (expected = IllegalStateException.class)
     public void testTakeProduct_QuantityManyHigherThanActual() {
-        Inventory inventory = Inventory.getInstance();
+        Inventory inventory = InventoryImpl.getInstance();
         inventory.addProduct(product1, 1);
         inventory.takeProduct(product1,100);
         //remove to maintain inventory
@@ -114,8 +118,8 @@ public class InventoryTest {
     }
     @Test
     public void testGetProductQuantity_ValidQuantities() {
-        Inventory inventory = Inventory.getInstance();
-        inventroy.addProduct(product1, 1);
+        Inventory inventory = InventoryImpl.getInstance();
+        inventory.addProduct(product1, 1);
         assertEquals(1,inventory.getProductQuantity(product1));
         inventory.addProduct(product2, 100);
         assertEquals(100,inventory.getProductQuantity(product2));
@@ -128,7 +132,7 @@ public class InventoryTest {
     }
     @Test
     public void testGetProductQuantity_ZeroQuantity() {
-        Inventory inventory = Inventory.getInstance();
+        Inventory inventory = InventoryImpl.getInstance();
         //add and then remove a product
         inventory.addProduct(product1,10);
         inventory.takeProduct(product1,10);
@@ -136,12 +140,12 @@ public class InventoryTest {
     }
     @Test (expected = IllegalArgumentException.class)
     public void testGetProductQuantity_NullProduct() {
-        Inventory.getInstance().getProductQuantity(null);
+        InventoryImpl.getInstance().getProductQuantity(null);
     }
     @Test
     public void testGetProducts_positive() {
-        Inventory inventory = Inventory.getInstance();
-        inventroy.addProduct(product1, 1);
+        Inventory inventory = InventoryImpl.getInstance();
+        inventory.addProduct(product1, 1);
         assertTrue(inventory.getProducts().contains(product1));
         inventory.addProduct(product2, 100);
         assertTrue(inventory.getProducts().contains(product2));
@@ -155,7 +159,7 @@ public class InventoryTest {
     }
     @Test
     public void testGetProducts_UniqueZero() {
-        Inventory inventory = Inventory.getInstance();
+        Inventory inventory = InventoryImpl.getInstance();
         //note that this product was not added in any other tests
         inventory.addProduct(inventoryTestProduct, 5);
         assertTrue(inventory.getProducts().contains(inventoryTestProduct));

@@ -13,6 +13,7 @@ public class MemberImpl implements Member {
 
     @Override
     public void selectProduct(Product product, int quantity) throws IllegalArgumentException, IllegalStateException {
+        //todo: Is this try-catch really necessary? (Same for returnProduct?)
         try {
             //if inventory can't take product, will throw IllegalState and not call shoppingBasket
             //if product or quantity are illegal arguments, IllegalArgument will be thrown and not call shoppingBasket

@@ -45,6 +45,6 @@ public class ProductTest {
     @Test
     public void testGetPrice() {
         Product product = new Product("Muffins", 1.00);
-        assertEquals(1.00, product.getPrice());
+        assertEquals(1.00, product.getPrice(), 0.0);
     }
 }
