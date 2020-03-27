@@ -6,24 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InventoryImpl implements Inventory {
-    private  static Inventory instance;
     private List<Product> products;
     private List<Pair<Product, Integer>> items;
 
+    /**
+     * Default constructor
+     */
     public InventoryImpl() {
         this.products = new ArrayList<>();
         this.items = new ArrayList<>();
     }
-
-    //todo: Do we need this? If so, do we include it in the interface?
-    public static Inventory getInstance() {
-        if(instance == null) {
-            instance = new InventoryImpl();
-        }
-        return instance;
-    }
-
-
 
     @Override
     public void addProduct(Product product, int quantity) throws IllegalArgumentException {

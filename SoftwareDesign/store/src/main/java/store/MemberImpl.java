@@ -3,8 +3,8 @@ package store;
 import javafx.util.Pair;
 
 public class MemberImpl implements Member {
-    Inventory inventory;
-    ShoppingBasket shoppingBasket;
+    private Inventory inventory;
+    private ShoppingBasket shoppingBasket;
 
     public MemberImpl(Inventory inventory, ShoppingBasket shoppingBasket) {
         this.inventory = inventory;

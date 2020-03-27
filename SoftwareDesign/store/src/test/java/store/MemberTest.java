@@ -72,10 +72,6 @@ public class MemberTest {
         Member member = new MemberImpl(mockInventory, mockBasket);
         doThrow(new IllegalArgumentException()).when(mockInventory).takeProduct(any(Product.class), eq(-1));
         member.selectProduct(product1,-1);
-        //todo: Are these called?
-        assertTrue(false);
-        verify(mockInventory).takeProduct(product1,-1);
-        verify(mockBasket, never()).addItem(product1,-1);
     }
     @Test
     public void testSelectProduct_QuantityTooHigh() {
