@@ -65,29 +65,31 @@ public class Node {
 
     //mutate children into valid children and return children
     public LinkedList<Node> filteredChildren(List<String> forbidden) {
-        switch (lastMove) {
-            case -100:
-            case 100:
-                adjustDigit2();
-                adjustDigit3();
-                break;
-            case -10:
-            case 10:
-                adjustDigit1();
-                adjustDigit3();
-                break;
-            case -1:
-            case 1:
-                adjustDigit1();
-                adjustDigit2();
-                break;
-            default:
-                adjustDigit1();
-                adjustDigit2();
-                adjustDigit3();
-                break;
+        if(children.isEmpty()) {
+            switch (lastMove) {
+                case -100:
+                case 100:
+                    adjustDigit2();
+                    adjustDigit3();
+                    break;
+                case -10:
+                case 10:
+                    adjustDigit1();
+                    adjustDigit3();
+                    break;
+                case -1:
+                case 1:
+                    adjustDigit1();
+                    adjustDigit2();
+                    break;
+                default:
+                    adjustDigit1();
+                    adjustDigit2();
+                    adjustDigit3();
+                    break;
+            }
+            children.removeIf(child -> forbidden.contains(child.digits));
         }
-        children.removeIf(child -> forbidden.contains(child.digits));
         return new LinkedList<>(children);
     }
 

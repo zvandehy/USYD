@@ -13,8 +13,7 @@ public class BreadthFirstSearch extends Game {
             //get first node in fringe
             node = fringe.remove(0);
             //if node has same digits and if node has same lastMove (and thus has same children)
-            //todo: It may not be enough to only check lastMove because of root,
-            //may need to check if children of each node in E contain all children in node
+
             while(expanded.contains(node)) {
                 //move on to next node in fringe
                 node = fringe.remove(0);

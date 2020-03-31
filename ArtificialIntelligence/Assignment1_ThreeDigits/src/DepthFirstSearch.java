@@ -11,9 +11,7 @@ public class DepthFirstSearch extends Game {
         try {
             //get first node in fringe
             node = fringe.remove(0);
-            //if node has same digits and if node has same lastMove (and thus has same children)
-            //todo: It may not be enough to only check lastMove because of root,
-            //may need to check if children of each node in E contain all children in node
+            //if node has same lastMove (and thus has same children)
             while(expanded.contains(node)) {
                 //move on to next node in fringe
                 node = fringe.remove(0);
@@ -29,11 +27,7 @@ public class DepthFirstSearch extends Game {
             return 1;
         }
         //add successors at front of fringe to be searched before other nodes in this node's level
-        System.out.println("-------");
-        System.out.println(fringe);
         fringe.addAll(0, node.filteredChildren(forbidden));
-        System.out.println(fringe);
-        System.out.println("++++++++=");
         return 0;
     }
 }

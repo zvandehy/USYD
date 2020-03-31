@@ -13,6 +13,7 @@ public class IterativeDeepeningSearch extends Game {
 
     @Override
     public int step() {
+        //if fringe is empty then we need to expand the depth
         if (fringe.isEmpty()) {
             maxDepth += 1;
             fringe.add(root);
@@ -20,61 +21,42 @@ public class IterativeDeepeningSearch extends Game {
             expanded.addAll(temp);
             temp = new LinkedList<>();
         }
+        //get the first node in the fringe
         Node node;
         node = fringe.remove(0);
         try {
-            //check for cycle
+            //if the node would create a cycle
             while (temp.contains(node)) {
                 //move on to next node in fringe
                 node = fringe.remove(0);
             }
         } catch(IndexOutOfBoundsException e) {
-            System.out.println("####ERROR####");
-            System.out.println("expand: " + expanded);
-            System.out.println("temp  : " + temp);
-            System.out.println("fringe: " + fringe);
-//            System.out.println("node depth: " + node.depth);
-            System.out.println("max depth : " + maxDepth);
-            System.out.println("#############");
+            //the only reason the fringe should be exhausted is if the tree was exhausted
+            System.out.println("Exit too early");
             return -1;
         }
+        //node does not create a cycle
+
+        //add to temp, which will be added to expanded once the depth is exhausted
+        //we use temp because checking for cycles on expanded would be redundant
+        //otherwise of course there would be cycles! We literally iterate over the same nodes!
         temp.add(node);
 
+        //if we found the goal then return
         if (node.digits.equals(goal)) {
+            expanded.addAll(temp);
             solution = findSolutionPath(node);
             return 1;
         }
+        //if depth has not reached the iterative depth limit
         if (node.depth < maxDepth) {
-            System.out.println("Why is the fringe doubled? ");
-            System.out.println("%%%%%%%%%%% BEFORE %%%%%%%%%%%%%%%");
-            System.out.println("expand: " + expanded + temp);
-            System.out.println("fringe: " + fringe);
-            System.out.println("node depth: " + node.depth);
-            System.out.println("max depth : " + maxDepth);
-            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-            //Todo: for some reason filteredChildren() is adding children into the fringe
-            System.out.println("f" + fringe + System.identityHashCode(fringe));
-            System.out.println("c" + node.children + System.identityHashCode(node.children));
+            //generate the children and add them to the fringe
             List<Node> filtered = node.filteredChildren(forbidden);
-            System.out.println("f" + fringe + System.identityHashCode(fringe));
-            System.out.println("c" + node.children + + System.identityHashCode(node.children));
             fringe.addAll(0, filtered);
-            System.out.println("f" + fringe + System.identityHashCode(fringe));
-            System.out.println("c" + node.children + System.identityHashCode(node.children));
-            System.out.println("%%%%%%%%%%% AFTER %%%%%%%%%%%%%%%%");
-            System.out.println("expand: " + expanded + temp);
-            System.out.println("fringe: " + fringe);
-            System.out.println("node depth: " + node.depth);
-            System.out.println("max depth : " + maxDepth);
-            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         }
 
-        System.out.println("---DEBUGGING---");
-        System.out.println("expand: " + expanded + temp);
-        System.out.println("fringe: " + fringe);
-        System.out.println("node depth: " + node.depth);
-        System.out.println("max depth : " + maxDepth);
-        System.out.println("---------------");
+        //if depth has reached its limit, then we have not yet found a solution
+        //we will step() through again, when we will increase the depth
         return 0;
     }
 }
