@@ -15,7 +15,6 @@ public abstract class Game {
         this.forbidden = forbidden;
         this.fringe = root.filteredChildren(forbidden);
         this.expanded = new LinkedList<>();
-
         this.solution = new LinkedList<>();
     }
 
@@ -37,7 +36,6 @@ public abstract class Game {
                     }
                     //all nodes exhausted without solution
                     else if (step == -1) {
-
                         ret = "No Solution Found\n";
                         break;
                     }
@@ -47,7 +45,8 @@ public abstract class Game {
                     ret = "No Solution Found\n";
                 }
             } else {
-                findSolutionPath(root);
+                //root is the goal
+                ret += root + "\n";
             }
             //Expanded nodes
             for(int i=0;i<expanded.size()-1;i++) {

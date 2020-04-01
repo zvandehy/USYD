@@ -95,8 +95,11 @@ public class Node {
 
     @Override
     public boolean equals(Object other) {
-        //todo: Make sure this checks for cycles correctly
         Node o = (Node) other;
+        //todo: Make sure this checks for cycles correctly
+        if(this == other) {
+            return false;
+        }
         return o.digits.equals(digits) && Math.abs(o.lastMove) == Math.abs(lastMove);
     }
 
