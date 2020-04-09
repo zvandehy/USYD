@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,11 +59,8 @@ public abstract class Game {
             System.out.println("No Solution Found");
             System.out.println();
         }
-
-
-
-
     }
+
 
     /**
      * This method is how each algorithm traverses through the game tree

@@ -1,12 +1,15 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class IterativeDeepeningSearch extends Game {
     int maxDepth;
+    LinkedList<Node> currentExpanded;
     public IterativeDeepeningSearch(String start, String goal, List<String> forbiddenList) {
         super(start, goal, forbiddenList);
         maxDepth = 0;
         fringe.clear();
+        currentExpanded = new LinkedList<>();
     }
 
     @Override
@@ -15,18 +18,24 @@ public class IterativeDeepeningSearch extends Game {
         if (fringe.isEmpty()) {
             maxDepth += 1;
             fringe.add(root);
+            currentExpanded = new LinkedList<>();
         }
         //get the first node in the fringe
+        int fringeSize = fringe.size();
+        LinkedList<Node> fringeTemp = new LinkedList<>(fringe);
         Node node;
         node = fringe.remove(0);
         try {
+
             //if the node would create a cycle
-            while (expanded.contains(node)) {
+            while(currentExpanded.contains(node)) {
                 //move on to next node in fringe
                 node = fringe.remove(0);
-
             }
         } catch(IndexOutOfBoundsException e) {
+            if(expanded.size() < 1000) {
+                return 0;
+            }
             //the only reason the fringe should be exhausted is if the tree was exhausted
             return -1;
         }
@@ -35,7 +44,7 @@ public class IterativeDeepeningSearch extends Game {
         //we use temp because checking for cycles on expanded would be redundant
         //otherwise of course there would be cycles! We literally iterate over the same nodes!
         expanded.add(node);
-
+        currentExpanded.add(node);
         //if we found the goal then return
         if (node.digits.equals(goal)) {
             solution = findSolutionPath(node);
