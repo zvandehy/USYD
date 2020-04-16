@@ -1,4 +1,4 @@
-//package au.edu.sydney.pac.erp.feaa;//package au.edu.sydney.pac.erp.feaa;
+package au.edu.sydney.pac.erp.feaa;//package au.edu.sydney.pac.erp.feaa;//package au.edu.sydney.pac.erp.feaa;
 //
 //import au.edu.sydney.pac.erp.auth.AuthModule;
 //import au.edu.sydney.pac.erp.client.Client;
