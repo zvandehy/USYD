@@ -27,7 +27,7 @@ public class MyClassTest {
         //doSomething calls getSomeResult(String param, int paramInt) some unknown number of times
         myClass.doSomething();
         //verify that doSomething() calls getSomeResult() at least 0 times
-        //save the String and int arguments in the respective ArgumentCaptors
+        //save the String and int arguments in the respective ArgumentCaptor
         verify(mock, atLeast(0)).getSomeResult(myDependencyStringCaptor.capture(), myDependencyIntegerCaptor.capture());
         //get the arguments that were passed from doSomething() to getSomeResult()
         List<String> capturedStrings = myDependencyStringCaptor.getAllValues();
