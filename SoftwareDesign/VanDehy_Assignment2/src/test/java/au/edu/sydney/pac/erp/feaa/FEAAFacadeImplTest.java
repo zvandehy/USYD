@@ -2013,13 +2013,16 @@ public class FEAAFacadeImplTest {
         verify(emailProvider, times(2)).printReport(any(
                 AuthToken.class), eq("email@gmail.com"), anyString());
         verify(faxProvider, times(2)).faxReport(any(AuthToken.class), eq("111"), anyString());
+        verify(printProvider, times(1)).printReport(any(AuthToken.class), anyString());
 
         //report made for 1
         feaa.setReportPreferences(1, false, false, true);
         assertEquals(1,feaa.makeReport(1));
         verify(reportProvider, times(3)).makeReport(any(AuthToken.class), anyInt(), anyString(), anyString(), anyInt());
         verify(faxProvider, times(3)).faxReport(any(AuthToken.class), eq("111"), anyString());
-
+        verify(emailProvider, times(2)).printReport(any(
+                AuthToken.class), eq("email@gmail.com"), anyString());
+        verify(printProvider, times(1)).printReport(any(AuthToken.class), anyString());
 
         when(reportProvider.makeReport(any(AuthToken.class), anyInt(), anyString(), anyString(), anyInt())).thenReturn(BigDecimal.valueOf(.49)); //set cost of commission for 1 report to 1
         assertEquals(0,feaa.makeReport(1));
