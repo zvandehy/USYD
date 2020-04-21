@@ -29,8 +29,6 @@ public class BlockchainServer {
             e.printStackTrace();
         }
 
-
-
     }
 
     public void serverHandler(InputStream clientInputStream, OutputStream clientOutputStream) {
