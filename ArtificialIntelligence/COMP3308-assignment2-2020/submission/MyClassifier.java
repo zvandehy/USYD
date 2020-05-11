@@ -4,29 +4,145 @@ import java.util.*;
 public class MyClassifier {
 
     public static void main(String[] args) {
-        if(args.length != 3) {
+        if(args.length == 3) {
+            String trainingFilePath = args[0];
+            String testingFilePath = args[1];
+            String classifier = args[2];
+            trainAndTest(trainingFilePath, testingFilePath, classifier);
+        } else if (args.length == 2) {
+            String filePath = args[0];
+            String classifier = args[1];
+            trainFolds(filePath, classifier);
+        } else {
             System.out.println("Invalid Input");
             System.exit(0);
         }
-        String trainingFilePath = args[0];
-        String testingFilePath = args[1];
-        String classifier = args[2];
 
+
+
+
+    }
+
+    private static void trainFolds(String filePath, String classifier) {
+        try {
+            int count = 1;
+            ArrayList<ArrayList<String[]>> folds = new ArrayList<>();
+            double total_accuracy = 0.0;
+
+            ArrayList<String[]> fold = getFold(filePath, count);
+            while(!fold.isEmpty()) {
+                folds.add(fold);
+                count++;
+                fold = getFold(filePath, count);
+            }
+
+            count = 1;
+            FileWriter test_writer = new FileWriter(new File("testing.csv"));
+            FileWriter train_writer = new FileWriter(new File("training.csv"));
+
+            ArrayList<String> expectedClass = new ArrayList<>();
+
+            //for each set of folds
+            for(int i=0;i<folds.size(); i++) { //size should be 10
+                ArrayList<String[]> testingFold = folds.get(i);
+                System.out.println("TEST: ");
+                System.out.println("fold" + count);
+                System.out.println("example: " + Arrays.toString(testingFold.get(0)).replaceAll("\\s", "")
+                        .replace("[", "").replace("]", ""));
+                //get examples for testing
+                for (String[] test_example : testingFold) {
+                    if (test_example.length > 1) {
+                        expectedClass.add(test_example[test_example.length - 1]);
+                        test_example = Arrays.copyOf(test_example, test_example.length - 1);
+                        String exampleAsString = Arrays.toString(test_example).replaceAll("\\s", "")
+                                .replace("[", "").replace("]", "");
+                        test_writer.write(exampleAsString + "\n");
+                        test_writer.flush();
+                    }
+                }
+                System.out.println("\n" + "TRAIN: ");
+
+                //get each training fold
+                for(int k=0;k<folds.size(); k++) {
+
+                    if(i!=k) {//if fold isn't the testing fold
+                        ArrayList<String[]> trainingFold = folds.get(k);
+                        System.out.println("fold" + (k+1));
+                        System.out.println("example: " + Arrays.toString(trainingFold.get(0)).replaceAll("\\s", "")
+                                .replace("[", "").replace("]", ""));
+                        //get examples for each training fold
+                        for (String[] train_example : trainingFold) {
+                            String exampleAsString = Arrays.toString(train_example).replaceAll("\\s", "")
+                                    .replace("[", "").replace("]", "");
+                            if (!exampleAsString.equals("")) {
+                                train_writer.write(exampleAsString + "\n");
+                                train_writer.flush();
+                            }
+                        }
+                    }
+                }
+                ArrayList<String> results = trainAndTest("training.csv", "testing.csv", classifier);
+                int correct = 0;
+                for(int j=0;j<results.size();j++) {
+                    String result = results.get(j).replaceAll("\\s","");
+                    String expected = expectedClass.get(j).replaceAll("\\s","");
+                    if(result.equals(expected)) {
+                        correct++;
+                    }
+                }
+                total_accuracy += correct / (double) results.size();
+                if(i!=9) {
+                    test_writer = new FileWriter(new File("testing.csv"));
+                    train_writer = new FileWriter(new File("training.csv"));
+                    expectedClass = new ArrayList<>();
+                }
+                count++;
+                System.out.println();
+                System.out.println();
+            }
+            double average_accuracy = total_accuracy / (double) folds.size();
+            System.out.println(average_accuracy);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+        //for each set of folds
+        //get examples for training
+        //get examples for testing
+        //train classifier with those examples and get results of testing data
+        //compare results to actual -> get accuracy
+        //adjust average accuracy
+
+
+
+    }
+
+    /**
+     * Main method for PASTA tests.
+     * @param trainingFilePath
+     * @param testingFilePath
+     * @param classifier
+     */
+    private static ArrayList<String> trainAndTest(String trainingFilePath, String testingFilePath, String classifier) {
         MyClassifier myClassifier = new MyClassifier();
-        if(classifier.substring(1).equals("NN")) {
-            int k = Integer.parseInt(classifier.substring(0,1));
+        if (classifier.substring(1).equals("NN")) {
+            int k = Integer.parseInt(classifier.substring(0, 1));
             try {
-                myClassifier.kNN(k, trainingFilePath, testingFilePath);
+                return myClassifier.kNN(k, trainingFilePath, testingFilePath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else if(classifier.equals("NB")) {
+        } else if (classifier.equals("NB")) {
             try {
-                myClassifier.NB(trainingFilePath, testingFilePath);
+                return myClassifier.NB(trainingFilePath, testingFilePath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        return new ArrayList<>();
     }
 
     /**
@@ -35,10 +151,11 @@ public class MyClassifier {
      * @param trainingFile - File path to training data
      * @param testingFile - File path to testing data
      */
-    public void kNN(int k, String trainingFile, String testingFile) throws IOException {
+    public ArrayList<String> kNN(int k, String trainingFile, String testingFile) throws IOException {
         ArrayList<String[]> training = getData(trainingFile);
         ArrayList<String[]> testing = getData(testingFile);
 
+        ArrayList<String> results = new ArrayList<>();
         for(String[] test : testing) {
             ArrayList<Data> distances = new ArrayList<>();
             for(String[] train : training) {
@@ -58,12 +175,18 @@ public class MyClassifier {
             }
             if(yes >= no) {
                 System.out.println("yes");
+                results.add("yes");
             } else {
                 System.out.println("no");
+                results.add("no");
             }
         }
+        return results;
     }
 
+    /**
+     * Holds distance and classifier information
+     */
     private static class Data implements Comparable<Data>{
         public double distance;
         public String classifier;
@@ -103,6 +226,12 @@ public class MyClassifier {
         return Math.sqrt(sum);
     }
 
+    /**
+     * Create a representation of the data in the provided file
+     * @param file - the file with the data
+     * @return a 2D array(list) of the data in the provided file
+     * @throws IOException if file name results in an error
+     */
     public ArrayList<String[]> getData(String file) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(new File(file)));
         ArrayList<String[]> data = new ArrayList<>();
@@ -116,13 +245,32 @@ public class MyClassifier {
         return data;
     }
 
+    public static ArrayList<String[]> getFold(String file, int fold) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(new File(file)));
+        ArrayList<String[]> data = new ArrayList<>();
+
+        String line = reader.readLine();
+        boolean ready = false;
+        while(line != null) {
+            if(line.contains("fold" + fold)) {
+                ready = true;
+            } else if(line.contains("fold") && !line.contains("fold" + fold)) {
+                ready = false;
+            } else if(ready){
+                String[] input = line.split(",");
+                data.add(input);
+            }
+            line = reader.readLine();
+        }
+        return data;
+    }
 
     /**
      * Use Naive Bayes to classify given data
      * @param trainingFile - File path to training data
      * @param testingFile - File path to testing data
      */
-    public void NB(String trainingFile, String testingFile) throws IOException {
+    public ArrayList<String> NB(String trainingFile, String testingFile) throws IOException {
         //P(yes|E) is probability class is "yes" given test data
         //P(yes|E) = f(E_1|yes) * f(E_2|yes) * f(E_i|yes) * P(yes)
         //P(E_1|yes) is normally distributed
@@ -138,6 +286,8 @@ public class MyClassifier {
 
         ArrayList<String[]> training = getData(trainingFile);
         ArrayList<String[]> testing = getData(testingFile);
+
+        ArrayList<String> results = new ArrayList<>();
 
         //for calculating P(E|yes) and P(E|no)
         float[] stddev_yes = new float[testing.get(0).length];
@@ -177,52 +327,45 @@ public class MyClassifier {
         float yes = yesCount / (float) training.size(); //P(yes)
         float no = noCount / (float) training.size(); //P(no)
 
+        //for each example to be classified
         for(String[] test : testing) {
-            float p_yes = 1;
-            float p_no = 1;
+
+            float p_yes = 1; //P(yes|E)
+            float p_no = 1; //P(no|E)
+
+            //P(E|yes) and P(E|no)
+            //for each attribute
             for(int i=0;i<test.length;i++) {
+                //p_yes
                 float stddev = stddev_yes[i];
                 float mean = mean_yes[i];
                 float x = Float.parseFloat(test[i]);
                 p_yes *= prob(x, mean, stddev);
-
-//                System.out.println("-----YES-----");
-//                System.out.println("STD DEV: " +stddev);
-//                System.out.println("MEAN   : " + mean);
-//                System.out.println("X      : " + x);
-//                System.out.println("left   : " + (stddev * Math.sqrt(2 * Math.PI)));
-//                System.out.println("stddev2: " + (2 * (stddev * stddev)));
-//                System.out.println("PROB   : " + p_yes);
-//                System.out.println("-------------\n");
-
-
-
-
+                //p_no
                 stddev = stddev_no[i];
                 mean = mean_no[i];
                 p_no *= prob(x, mean, stddev);
 
-//                System.out.println("-----NO-----");
-//                System.out.println("STD DEV: " +stddev);
-//                System.out.println("MEAN   : " + mean);
-//                System.out.println("X      : " + x);
-//                System.out.println("left   : " + (stddev * Math.sqrt(2 * Math.PI)));
-//                System.out.println("stddev2: " + (2 * (stddev * stddev)));
-//                System.out.println("PROB   : " + p_no);
-//                System.out.println("-------------\n");
-
             }
-            p_yes *= yes;
-            p_no *= no;
+            p_yes *= yes;//multiply by P(yes)
+            p_no *= no;//multiply by P(no)
 
             if(p_yes >= p_no) {
                 System.out.println("yes");
+                results.add("yes");
             } else {
                 System.out.println("no");
+                results.add("no");
             }
         }
+        return results;
     }
 
+    /**
+     * Find the mean of a given set of numbers
+     * @param numbers - the set of numbers to find the mean for
+     * @return the average of the given numbers
+     */
     private float mean(ArrayList<Float> numbers) {
         float sum = 0;
         for(Float f : numbers) {
@@ -232,6 +375,12 @@ public class MyClassifier {
 
     }
 
+    /**
+     * Find the standard deviation of a given set of numbers and their mean
+     * @param numbers - the set of numbers to find the standard deviation for
+     * @param mean - the mean of the set of numbers
+     * @return the standard deviation of the given numbers
+     */
     private float stddev(ArrayList<Float> numbers, Float mean) {
         float sum = 0;
         for(Float f : numbers) {
@@ -243,9 +392,15 @@ public class MyClassifier {
         return (float) Math.sqrt(variance);
     }
 
+    /**
+     * The probability density function given a value, a mean, and standard deviation
+     * @param x
+     * @param mean
+     * @param stddev
+     * @return the probability of the given values
+     */
     private float prob(float x, float mean, float stddev) {
         float squared = (x - mean) * (x - mean);
         return (float) (1 / ( (stddev * Math.sqrt(2 * Math.PI))) * Math.exp(-((squared / (2 * (stddev * stddev) )))) );
     }
-
 }
