@@ -123,7 +123,7 @@ public class ClientImpl implements Client {
     @Override
     public String getInternalAccounting() {
         if(!loadedFields.get("internalAccounting")) {
-            this.internalAccounting = TestDatabase.getInstance().getClientField(token, id, "internalAccounting");
+            this.internalAccounting = TestDatabase.getInstance().getClientField(token, id, "internal accounting");
             loadedFields.put("internalAccounting", true);
         }
         return internalAccounting;
