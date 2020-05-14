@@ -61,7 +61,6 @@ public class BlockchainServerRunnable implements Runnable{
                 }
             }
         } catch (IOException e) {
-        } catch (InterruptedException e) {
         }
     }
 }
