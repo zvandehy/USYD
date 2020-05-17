@@ -16,8 +16,6 @@ public class ClientLoadLagTest {
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     PrintStream standard = System.out;
 
-
-
     @Test
     public void testLoadClients() {
         System.out.println("#clients | time");
