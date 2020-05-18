@@ -52,4 +52,9 @@ public class ServerInfo {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "hashcode: " + hashCode() + " (host, port) = (" + host + ", " + port + ")";
+    }
 }

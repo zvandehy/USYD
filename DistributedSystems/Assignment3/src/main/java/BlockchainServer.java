@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -8,26 +9,31 @@ public class BlockchainServer {
 
     public static void main(String[] args) {
 
-        if (args.length != 3) {
-            return;
-        }
-
         int localPort = 0;
         int remotePort = 0;
         String remoteHost = null;
 
-        try {
-            localPort = Integer.parseInt(args[0]);
-            remoteHost = args[1];
-            remotePort = Integer.parseInt(args[2]);
-        } catch (NumberFormatException e) {
-            return;
-        }
-
         Blockchain blockchain = new Blockchain();
 
         HashMap<ServerInfo, Date> serverStatus = new HashMap<ServerInfo, Date>(); //list of peer nodes in p2p network
-        serverStatus.put(new ServerInfo(remoteHost, remotePort), new Date()); //on startup, add the remote peer to the network
+
+
+        if (args.length == 3) {
+            try {
+                localPort = Integer.parseInt(args[0]);
+                remoteHost = args[1];
+                remotePort = Integer.parseInt(args[2]);
+                serverStatus.put(new ServerInfo(remoteHost, remotePort), new Date()); //on startup, add the remote peer to the network
+            } catch (NumberFormatException e) {
+                return;
+            }
+        } else if(args.length == 1){
+            try {
+                localPort = Integer.parseInt(args[0]);
+            } catch (NumberFormatException e) {
+                return;
+            }
+        }
 
         //todo: Perform a catchup request with the remote server
 
@@ -49,6 +55,8 @@ public class BlockchainServer {
         Thread latestBlock = new Thread(new PeriodicLastBlockRunnable(localPort, serverStatus, blockchain));
         latestBlock.start();
 
+//        ArrayList<Thread> threadArrayList = new ArrayList<>();
+
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(localPort); //open socket for other peers to connect to
@@ -57,8 +65,9 @@ public class BlockchainServer {
                 Socket clientSocket = serverSocket.accept(); //wait until a peer connects
                 //start a thread to handle the connection with the peer
                 //allows this server to spend more time in the accept() call
-                new Thread(new BlockchainServerRunnable(clientSocket, blockchain, serverStatus)).start();
-
+                Thread thread = new Thread(new BlockchainServerRunnable(clientSocket, blockchain, serverStatus));
+                thread.start();
+//                threadArrayList.add(thread);
             }
         } catch (IllegalArgumentException | IOException e) {
         } finally { //stop all of the processes
@@ -68,6 +77,12 @@ public class BlockchainServer {
                 heartbeats.join();
                 update.join();
                 latestBlock.join();
+//                for (Thread thread : threadArrayList) {
+//                    try {
+//                        thread.join();
+//                    } catch (InterruptedException e) {
+//                    }
+//                }
                 if (serverSocket != null)
                     serverSocket.close();
             } catch (IOException | InterruptedException e) {

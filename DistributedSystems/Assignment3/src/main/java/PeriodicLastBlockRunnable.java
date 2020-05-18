@@ -17,7 +17,7 @@ public class PeriodicLastBlockRunnable implements Runnable {
         while(true) {
             // broadcast lb message to 5 random peers
             ArrayList<ServerInfo> randomServerInfos = new ArrayList<>();
-            ArrayList<ServerInfo> serverInfos = new ArrayList<>(Arrays.asList((ServerInfo[]) serverStatus.keySet().toArray()));
+            ArrayList<ServerInfo> serverInfos = new ArrayList<>(Arrays.asList(serverStatus.keySet().toArray(new ServerInfo[0])));
 
             //if there are less than 5 servers in the network, then just set those as the random servers
             if(serverInfos.size() > 5) {
@@ -29,7 +29,7 @@ public class PeriodicLastBlockRunnable implements Runnable {
             } else {
                 randomServerInfos = serverInfos;
             }
-//            ArrayList<Thread> threadArrayList = new ArrayList<>();
+
             String hash = blockchain.getHead() == null ? "null" : Base64.getEncoder().encodeToString(blockchain.getHead().calculateHash());
             //message is "lb|<port>|length|lastHash"
             String message = "lb|"+ localPort +"|"+blockchain.getLength()+"|"+hash;
@@ -38,20 +38,13 @@ public class PeriodicLastBlockRunnable implements Runnable {
             for (ServerInfo toServerInfo : randomServerInfos) {
                 //the socket in this thread will timeout after 2 seconds
                 Thread thread = new Thread(new SendMessageRunnable(toServerInfo, message));
-//                threadArrayList.add(thread);
                 thread.start();
             }
-//            //wait until each thread (that sends the message) is done
-//            for (Thread thread : threadArrayList) {
-//                try {
-//                    thread.join();
-//                } catch (InterruptedException e) {
-//                }
-//            }
+
 
             // sleep for two seconds
             try {
-                Thread.sleep(2000);
+                Thread.sleep(6000);
             } catch (InterruptedException e) {
             }
         }

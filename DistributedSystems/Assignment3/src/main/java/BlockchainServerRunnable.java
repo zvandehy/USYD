@@ -2,10 +2,7 @@
 import java.io.*;
 import java.net.Socket;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
 public class BlockchainServerRunnable implements Runnable{
 
@@ -31,6 +28,7 @@ public class BlockchainServerRunnable implements Runnable{
 
         BufferedReader inputReader = new BufferedReader(
                 new InputStreamReader(clientInputStream));
+
         PrintWriter outWriter = new PrintWriter(clientOutputStream, true);
 
         //this node's serverInfo
@@ -41,6 +39,7 @@ public class BlockchainServerRunnable implements Runnable{
         try {
             while (true) {//run until "cc"
                 String inputLine = inputReader.readLine();//get message from peer
+//                System.out.println("..."+inputLine);
                 if (inputLine == null) {
                     break;
                 }
@@ -66,7 +65,6 @@ public class BlockchainServerRunnable implements Runnable{
                         int clientPort = Integer.parseInt(tokens[1]);
                         ServerInfo clientServerInfo = new ServerInfo(clientHost, clientPort);
                         //log the ServerInfo with corresponding time
-
                         //if this is the first time then need to broadcast si message
                         if(tokens[2].equals("0")) {
                             for(ServerInfo toServerInfo : serverStatus.keySet()) {
@@ -76,6 +74,7 @@ public class BlockchainServerRunnable implements Runnable{
                                 String message = "si|"+clientSocket.getLocalPort()+"|"+clientHost+"|"+clientPort;
                                 Thread thread = new Thread(new SendMessageRunnable(toServerInfo, message));
                                 thread.start();
+                                thread.join();
                             }
                         }
                         //add peer to serverStatus after check for first time
@@ -114,33 +113,147 @@ public class BlockchainServerRunnable implements Runnable{
                             }
                             //add peer to serverStatus
                             serverStatus.put(peerServerInfo, new Date());
-//                            serverStatus.put(originatorServerInfo, new Date());
                         }
                         return;
                     //close connection
                     case "lb":
+//                        System.out.println("Port " + tokens[1] + " is checking on me");
+
                         //if the length of your neighbour blockchain is longer than
                         //yours, a catch up is required.
                         boolean smaller_length = blockchain.getLength() < Integer.parseInt(tokens[2]);
                         //if the length of your neighbour blockchain is the same to
                         //yours, but the hash is smaller than yours.
-                        boolean longer_hash = (blockchain.getLength() == Integer.parseInt(tokens[2])) &&
-                                (Base64.getEncoder().encodeToString(blockchain.getHead().calculateHash()).length() > tokens[3].length());
+                        boolean longer_hash;
+                        try {
+                            longer_hash =
+                                    (blockchain.getLength() == Integer.parseInt(tokens[2])) &&
+                                            (Base64.getEncoder().encodeToString(blockchain.getHead().calculateHash()).length() > tokens[3].length());
+                        } catch (Exception e) {
+                            longer_hash = smaller_length;
+                        }
                         if(smaller_length || longer_hash) {
+                            peerHost = (((InetSocketAddress) clientSocket.getRemoteSocketAddress()).getAddress()).toString().replace("/", "");
+                            peerPort = Integer.parseInt(tokens[1]);
+                            peerServerInfo = new ServerInfo(peerHost, peerPort);
+
                             //must issue a catchup to the peer
+                            //sets up thread to receive the blocks and request others ("cu|<has<") if necessary
+//                            CatchupRequestRunnable catchup = new CatchupRequestRunnable(peerServerInfo, clientOutputStream, blockchain);
+//                            catchup.execute();
+
+                            Socket blockSocket = new Socket(peerHost,peerPort);
+                            PrintWriter printWriter = new PrintWriter(blockSocket.getOutputStream());
+
+//                            System.out.println("Initiating Catchup...");
+
+                            Stack<Block> newBlocks = new Stack<>();
+
+//                            System.out.println("Sending cu");
+                            // send the cu message
+                            printWriter.println("cu");
+                            printWriter.flush();
+
+                            //must use ObjectInputStream and ObjectOutputStream to transfer the block
+                            ObjectInputStream receiveBlockStream;
+                            receiveBlockStream = new ObjectInputStream(blockSocket.getInputStream());
+
+                            Block receivedBlock = (Block) receiveBlockStream.readObject();
+//                            System.out.println("Received: " + receivedBlock);
+
+                            receiveBlockStream.close();
+                            blockSocket.close();
+
+
+
+                            //we want to stop when received.previous = our head/last block
+                            //continue getting blocks until...
+                            //stop if the received block is null
+                            //stop if our head is not null and the received block = our head
+                            //otherwise received block should be added
+                            //don't request another block if the block before received is null (hash = "AAA...")
+                            //don't request another block if the block before received is the same as our head
+                            while(true) {
+
+                                //stop if the received block is null
+                                if(receivedBlock == null) {
+//                                    System.out.println("BLOCK IS NULL");
+                                    break;
+                                }
+                                //stop if our head is not null and the received block = our head
+                                else if(blockchain.getHead() != null && Arrays.equals(receivedBlock.calculateHash(), blockchain.getHead().calculateHash())) {
+                                    break;
+                                }
+
+                                //otherwise received block should be added
+                                newBlocks.push(receivedBlock);
+
+                                //don't request another block if the block before received is null (hash = "AAA...")
+                                if(Base64.getEncoder().encodeToString(receivedBlock.getPreviousHash()).startsWith("AAAAA")) {
+                                    break;
+                                }
+                                //don't request another block if the block before received is the same as our head
+                                else if(blockchain.getHead() != null && Arrays.equals(receivedBlock.getPreviousHash(), blockchain.getHead().calculateHash())) {
+                                    break;
+                                }
+
+                                blockSocket = new Socket(peerHost,peerPort);
+                                printWriter = new PrintWriter(blockSocket.getOutputStream());
+
+//                                System.out.println("sending: " + "cu|"+ Base64.getEncoder().encodeToString(receivedBlock.getPreviousHash()));
+                                printWriter.println("cu|"+ Base64.getEncoder().encodeToString(receivedBlock.getPreviousHash()));
+                                printWriter.flush();
+
+                                receiveBlockStream = new ObjectInputStream(blockSocket.getInputStream());
+
+                                receivedBlock = (Block) receiveBlockStream.readObject();
+                                receiveBlockStream.close();
+                                blockSocket.close();
+
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                }
+                            }
+
+//                            System.out.println("Changing my blockchain");
+                            //add the new blocks to the end of the blockchain
+                            while(newBlocks.size() > 0) {
+                                Block nextBlock = newBlocks.pop();
+                                nextBlock.setPreviousBlock(blockchain.getHead());
+                                blockchain.setHead(nextBlock);
+                                blockchain.setLength(blockchain.getLength()+1);
+                            }
+
+                        } else {
+//                            System.out.println("I am up to date!");
                         }
                         return;
                     case "cu":
-                        //todo:transfer the designated blocks
-                        //may move this logic to another class
-                        //todo: design a catchup algorithm
-                        if(tokens.length == 1) { //"cu"
-                            //reply with the latest/head block
-                            //must use ObjectInputStream and ObjectOutputStream to transfer the block
+//                        System.out.println("Received: " + inputLine);
 
-                        } else { //"cu|<hash>"
-                            //find the block with the designated hash
-                            //reply with the designated block as above
+                        //must use ObjectInputStream and ObjectOutputStream to transfer the block
+                        ObjectOutputStream sendBlockStream = new ObjectOutputStream(clientSocket.getOutputStream());
+
+                        try {
+                            if(tokens.length == 1) { //"cu"
+//                                System.out.println("Sent: " + blockchain.getHead());
+                                //send latest block to client
+                                sendBlockStream.writeObject(blockchain.getHead());
+                            } else { //"cu|<hash>"
+//                                System.out.println("received cu|<hash>");
+                                //find the block with the designated hash
+                                Block currentBlock = blockchain.getHead();
+                                while(currentBlock != null && !Base64.getEncoder().encodeToString(currentBlock.calculateHash()).equals(tokens[1])) {
+                                    currentBlock = currentBlock.getPreviousBlock();
+                                }
+                                //reply with the designated block as above
+//                                System.out.println("Sent: " + currentBlock);
+                                sendBlockStream.writeObject(currentBlock);
+                            }
+                            sendBlockStream.flush();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                         return;
                     case "cc":
@@ -153,6 +266,8 @@ public class BlockchainServerRunnable implements Runnable{
             }
         } catch (IOException e) {
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
