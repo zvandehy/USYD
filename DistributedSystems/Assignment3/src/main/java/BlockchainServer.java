@@ -18,14 +18,22 @@ public class BlockchainServer {
         HashMap<ServerInfo, Date> serverStatus = new HashMap<ServerInfo, Date>(); //list of peer nodes in p2p network
 
 
+
         if (args.length == 3) {
             try {
                 localPort = Integer.parseInt(args[0]);
                 remoteHost = args[1];
                 remotePort = Integer.parseInt(args[2]);
-                serverStatus.put(new ServerInfo(remoteHost, remotePort), new Date()); //on startup, add the remote peer to the network
+                ServerInfo peerServerInfo = new ServerInfo(remoteHost, remotePort);
+                serverStatus.put(peerServerInfo, new Date()); //on startup, add the remote peer to the network//perform a catchup request with the remote server
+                Thread catchup = new Thread(new CatchupRequestRunnable(peerServerInfo, blockchain));
+                catchup.start();
+                catchup.join();
+
             } catch (NumberFormatException e) {
                 return;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         } else if(args.length == 1){
             try {
@@ -35,7 +43,7 @@ public class BlockchainServer {
             }
         }
 
-        //todo: Perform a catchup request with the remote server
+
 
         //simulate miners committing blocks to blockchain
         PeriodicCommitRunnable pcr = new PeriodicCommitRunnable(blockchain);
