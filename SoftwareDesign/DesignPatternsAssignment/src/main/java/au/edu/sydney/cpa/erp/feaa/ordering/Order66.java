@@ -46,13 +46,7 @@ public class Order66 implements Order {
         // rebuilt over the network, so we have to check for presence and same values
 
         for (Report contained: reports.keySet()) {
-            if (contained.getCommission() == report.getCommission() &&
-                    contained.getReportName().equals(report.getReportName()) &&
-                    Arrays.equals(contained.getLegalData(), report.getLegalData()) &&
-                    Arrays.equals(contained.getCashFlowData(), report.getCashFlowData()) &&
-                    Arrays.equals(contained.getMergesData(), report.getMergesData()) &&
-                    Arrays.equals(contained.getTallyingData(), report.getTallyingData()) &&
-                    Arrays.equals(contained.getDeductionsData(), report.getDeductionsData())) {
+            if (contained.equals(report)) {
                 report = contained;
                 break;
             }
@@ -72,13 +66,7 @@ public class Order66 implements Order {
         // rebuilt over the network, so we have to check for presence and same values
 
         for (Report contained: reports.keySet()) {
-            if (contained.getCommission() == report.getCommission() &&
-                    contained.getReportName().equals(report.getReportName()) &&
-                    Arrays.equals(contained.getLegalData(), report.getLegalData()) &&
-                    Arrays.equals(contained.getCashFlowData(), report.getCashFlowData()) &&
-                    Arrays.equals(contained.getMergesData(), report.getMergesData()) &&
-                    Arrays.equals(contained.getTallyingData(), report.getTallyingData()) &&
-                    Arrays.equals(contained.getDeductionsData(), report.getDeductionsData())) {
+            if (contained.equals(report)) {
                 report = contained;
                 break;
             }
