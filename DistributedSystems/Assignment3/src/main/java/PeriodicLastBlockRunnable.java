@@ -44,7 +44,7 @@ public class PeriodicLastBlockRunnable implements Runnable {
 
             // sleep for two seconds
             try {
-                Thread.sleep(6000);
+                Thread.sleep(40000);
             } catch (InterruptedException e) {
             }
         }

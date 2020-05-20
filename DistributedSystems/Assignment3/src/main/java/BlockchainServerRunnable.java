@@ -60,6 +60,7 @@ public class BlockchainServerRunnable implements Runnable{
                         outWriter.flush();
                         break;
                     case "hb":
+                        System.out.println(inputLine);
                         //get ServerInfo from peer(client) that sent heartbeat
                         String clientHost = (((InetSocketAddress) clientSocket.getRemoteSocketAddress()).getAddress()).toString().replace("/", "");
                         int clientPort = Integer.parseInt(tokens[1]);
@@ -82,7 +83,7 @@ public class BlockchainServerRunnable implements Runnable{
                         serverStatus.put(clientServerInfo, new Date());
                         return;
                     case "si":
-
+                        System.out.println(inputLine);
                         //get ServerInfo of Q, the originator who sent the si message
                         String originatorHost = (((InetSocketAddress) clientSocket.getRemoteSocketAddress()).getAddress()).toString().replace("/", "");
                         int originatorPort = Integer.parseInt(tokens[1]);
@@ -117,11 +118,12 @@ public class BlockchainServerRunnable implements Runnable{
                         return;
                     //close connection
                     case "lb":
-//                        System.out.println("Port " + tokens[1] + " is checking on me");
+                        System.out.println(inputLine);
 
                         //if the length of your neighbour blockchain is longer than
                         //yours, a catch up is required.
                         boolean smaller_length = blockchain.getLength() < Integer.parseInt(tokens[2]);
+
                         //if the length of your neighbour blockchain is the same to
                         //yours, but the hash is smaller than yours.
                         boolean longer_hash;
@@ -147,7 +149,7 @@ public class BlockchainServerRunnable implements Runnable{
                         }
                         return;
                     case "cu":
-//                        System.out.println("Received: " + inputLine);
+                        System.out.println(inputLine);
 
                         //must use ObjectInputStream and ObjectOutputStream to transfer the block
                         ObjectOutputStream sendBlockStream = new ObjectOutputStream(clientSocket.getOutputStream());
