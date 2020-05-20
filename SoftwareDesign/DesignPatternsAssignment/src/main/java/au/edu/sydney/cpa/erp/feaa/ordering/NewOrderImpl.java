@@ -33,9 +33,6 @@ public class NewOrderImpl implements Order {
     public void setReport(Report report, int employeeCount) {
         if (finalised) throw new IllegalStateException("Order was already finalised.");
 
-        // We can't rely on equal reports having the same object identity since they get
-        // rebuilt over the network, so we have to check for presence and same values
-
         for (Report contained: reports.keySet()) {
             if (contained.equals(report)) {
                 report = contained;
@@ -53,9 +50,6 @@ public class NewOrderImpl implements Order {
 
     @Override
     public int getReportEmployeeCount(Report report) {
-        // We can't rely on equal reports having the same object identity since they get
-        // rebuilt over the network, so we have to check for presence and same values
-
         for (Report contained: reports.keySet()) {
             if (contained.equals(report)) {
                 report = contained;
@@ -76,6 +70,19 @@ public class NewOrderImpl implements Order {
         this.finalised = true;
     }
 
+
+    protected Map<Report, Integer> getReports() {
+        return reports;
+    }
+
+    @Override
+    public int getOrderID() {
+        return id;
+    }
+
+    protected boolean isFinalised() {
+        return finalised;
+    }
 
     @Override
     public Order copy() {
@@ -161,16 +168,4 @@ public class NewOrderImpl implements Order {
         return cost;
     }
 
-    protected Map<Report, Integer> getReports() {
-        return reports;
-    }
-
-    @Override
-    public int getOrderID() {
-        return id;
-    }
-
-    protected boolean isFinalised() {
-        return finalised;
-    }
 }

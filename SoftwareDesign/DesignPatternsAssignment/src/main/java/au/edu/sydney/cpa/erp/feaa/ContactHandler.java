@@ -7,6 +7,7 @@ import au.edu.sydney.cpa.erp.ordering.Client;
 import java.util.Arrays;
 import java.util.List;
 
+//TODO: Probably just need to turn ContactMethod into the InvoiceHandler Interface and refactor the FEAA to setNextInChain
 public class ContactHandler {
     public static boolean sendInvoice(AuthToken token, Client client, List<ContactMethod> priority, String data) {
         for (ContactMethod method : priority) {
