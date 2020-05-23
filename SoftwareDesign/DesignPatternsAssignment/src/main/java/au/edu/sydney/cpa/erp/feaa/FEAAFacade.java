@@ -3,11 +3,12 @@ package au.edu.sydney.cpa.erp.feaa;
 import au.edu.sydney.cpa.erp.auth.AuthModule;
 import au.edu.sydney.cpa.erp.auth.AuthToken;
 import au.edu.sydney.cpa.erp.database.TestDatabase;
+import au.edu.sydney.cpa.erp.feaa.handlers.*;
+import au.edu.sydney.cpa.erp.feaa.ordering.*;
+import au.edu.sydney.cpa.erp.feaa.reports.ReportDatabase;
 import au.edu.sydney.cpa.erp.ordering.Client;
 import au.edu.sydney.cpa.erp.ordering.Order;
 import au.edu.sydney.cpa.erp.ordering.Report;
-import au.edu.sydney.cpa.erp.feaa.ordering.*;
-import au.edu.sydney.cpa.erp.feaa.reports.ReportDatabase;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -130,28 +131,28 @@ public class FEAAFacade {
             throw new SecurityException();
         }
 
-        List<ContactMethod> contactPriorityAsMethods = new ArrayList<>();
+        List<ContactMethod> contactHandlers = new ArrayList<>();
 
         if (null != contactPriority) {
             for (String method: contactPriority) {
                 switch (method.toLowerCase()) {
                     case "internal accounting":
-                        contactPriorityAsMethods.add(ContactMethod.INTERNAL_ACCOUNTING);
+                        contactHandlers.add(new InternalAccountingHandler());
                         break;
                     case "email":
-                        contactPriorityAsMethods.add(ContactMethod.EMAIL);
+                        contactHandlers.add(new EmailHandler());
                         break;
                     case "carrier pigeon":
-                        contactPriorityAsMethods.add(ContactMethod.CARRIER_PIGEON);
+                        contactHandlers.add(new CarrierPigeonHandler());
                         break;
                     case "mail":
-                        contactPriorityAsMethods.add(ContactMethod.MAIL);
+                        contactHandlers.add(new MailHandler());
                         break;
                     case "phone call":
-                        contactPriorityAsMethods.add(ContactMethod.PHONECALL);
+                        contactHandlers.add(new PhoneCallHandler());
                         break;
                     case "sms":
-                        contactPriorityAsMethods.add(ContactMethod.SMS);
+                        contactHandlers.add(new SMSHandler());
                         break;
                     default:
                         break;
@@ -159,13 +160,13 @@ public class FEAAFacade {
             }
         }
 
-        if (contactPriorityAsMethods.size() == 0) { // needs setting to default
-            contactPriorityAsMethods = Arrays.asList(
-                    ContactMethod.INTERNAL_ACCOUNTING,
-                    ContactMethod.EMAIL,
-                    ContactMethod.CARRIER_PIGEON,
-                    ContactMethod.MAIL,
-                    ContactMethod.PHONECALL
+        if (contactHandlers.size() == 0) { // needs setting to default
+            contactHandlers = Arrays.asList(
+                    new InternalAccountingHandler(),
+                    new EmailHandler(),
+                    new CarrierPigeonHandler(),
+                    new MailHandler(),
+                    new PhoneCallHandler()
             );
         }
 
@@ -173,7 +174,7 @@ public class FEAAFacade {
 
         order.finalise();
         TestDatabase.getInstance().saveOrder(token, order);
-        return ContactHandler.sendInvoice(token, getClient(order.getClient()), contactPriorityAsMethods, order.generateInvoiceData());
+        return ContactHandler.sendInvoice(token, getClient(order.getClient()), contactHandlers, order.generateInvoiceData());
     }
 
     public void logout() {

@@ -98,7 +98,7 @@ public class ReportImpl implements Report {
         if(hashcode != o.hashCode()) return false;
 
         //if two objects share the same hashCode, it is possible that they are not equal (collision)
-        //thus, we still need to compare the values of the
+        //thus, we still need to compare all the other values
         ReportImpl report = (ReportImpl) o;
         return Double.compare(report.commissionPerEmployee, commissionPerEmployee) == 0 &&
                 name.equals(report.name) &&

@@ -1,16 +1,14 @@
-package au.edu.sydney.cpa.erp.feaa;
+package au.edu.sydney.cpa.erp.feaa.handlers;
 
 import au.edu.sydney.cpa.erp.auth.AuthToken;
 import au.edu.sydney.cpa.erp.contact.Email;
 import au.edu.sydney.cpa.erp.ordering.Client;
 
-public class EmailHandler implements InvoiceHandler {
-
-    private InvoiceHandler next;
-
+public class EmailHandler implements ContactMethod {
+    private ContactMethod next;
     @Override
-    public void setNextChain(InvoiceHandler nextInvoiceHandler) {
-        this.next = nextInvoiceHandler;
+    public void setNext(ContactMethod handler) {
+        this.next = handler;
     }
 
     @Override
@@ -19,7 +17,8 @@ public class EmailHandler implements InvoiceHandler {
         if (null != email) {
             Email.sendInvoice(token, client.getFName(), client.getLName(), data, email);
             return true;
-        } else if(next == null) {
+        }
+        if(next == null) {
             return false;
         } else {
             return next.sendInvoice(token, client, data);

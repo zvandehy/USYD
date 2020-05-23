@@ -1,10 +1,12 @@
-package au.edu.sydney.cpa.erp.feaa;
+package au.edu.sydney.cpa.erp.feaa.handlers;
 
 import au.edu.sydney.cpa.erp.auth.AuthToken;
 import au.edu.sydney.cpa.erp.ordering.Client;
 
-public interface InvoiceHandler {
+public interface ContactMethod {
 
-    void setNextChain(InvoiceHandler nextInvoiceHandler);
+    void setNext(ContactMethod handler);
+
     boolean sendInvoice(AuthToken token, Client client, String data);
+
 }
