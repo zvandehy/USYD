@@ -40,12 +40,12 @@ public class CriticalAuditOrder implements Order {
         // We can't rely on equal reports having the same object identity since they get
         // rebuilt over the network, so we have to check for presence and same values
 
-        for (Report contained: reports.keySet()) {
-            if (contained.equals(report)) {
-                report = contained;
-                break;
-            }
-        }
+//        for (Report contained: reports.keySet()) {
+//            if (contained.equals(report)) {
+//                report = contained;
+//                break;
+//            }
+//        }
 
         reports.put(report, employeeCount);
     }
@@ -57,15 +57,12 @@ public class CriticalAuditOrder implements Order {
 
     @Override
     public int getReportEmployeeCount(Report report) {
-        // We can't rely on equal reports having the same object identity since they get
-        // rebuilt over the network, so we have to check for presence and same values
-
-        for (Report contained: reports.keySet()) {
-            if (contained.equals(report)) {
-                report = contained;
-                break;
-            }
-        }
+//        for (Report contained: reports.keySet()) {
+//            if (contained.equals(report)) {
+//                report = contained;
+//                break;
+//            }
+//        }
         Integer result = reports.get(report);
         return null == result ? 0 : result;
     }
@@ -90,6 +87,8 @@ public class CriticalAuditOrder implements Order {
         for (Report report : reports.keySet()) {
             copy.setReport(report, reports.get(report));
         }
+
+        if(finalised) copy.finalise();
 
         return copy;
     }

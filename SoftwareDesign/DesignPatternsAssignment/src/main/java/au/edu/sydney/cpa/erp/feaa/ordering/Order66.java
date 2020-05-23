@@ -147,7 +147,6 @@ public class Order66 implements Order {
         sb.append("\nPlease see below for details:\n");
         List<Report> keyList = new ArrayList<>(reports.keySet());
         keyList.sort(Comparator.comparing(Report::getReportName).thenComparing(Report::getCommission));
-
         for (Report report : keyList) {
             double subtotal = report.getCommission() * Math.min(maxCountedEmployees, reports.get(report));
 

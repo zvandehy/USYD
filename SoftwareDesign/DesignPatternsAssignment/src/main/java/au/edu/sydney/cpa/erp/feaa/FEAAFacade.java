@@ -75,15 +75,15 @@ public class FEAAFacade {
         } else {
             if (1 == orderType) {
                 if (isCritical) {
-                    order = new FirstOrderType(id, clientID, date, criticalLoading, maxCountedEmployees);
+                    order = new OrderImpl(id, clientID, date, new CriticalPriority(criticalLoading), new RegularWorkType(maxCountedEmployees));//FirstOrderType
                 } else {
-                    order = new Order66(id, clientID, date, maxCountedEmployees);
+                    order = new OrderImpl(id, clientID, date, new RegularPriority(), new RegularWorkType(maxCountedEmployees));//Order66
                 }
             } else if (2 == orderType) {
                 if (isCritical) {
-                    order = new CriticalAuditOrder(id, clientID, date, criticalLoading);
+                    order = new OrderImpl(id, clientID, date, new CriticalPriority(criticalLoading), new AuditWorkType());//CriticalAuditOrder
                 } else {
-                    order = new NewOrderImpl(id, clientID, date);
+                    order = new OrderImpl(id, clientID, date, new RegularPriority(), new AuditWorkType());//NewOrderImpl
                 }
             } else {return null;}
         }

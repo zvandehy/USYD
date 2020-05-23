@@ -19,6 +19,7 @@ public class ContactHandler {
     public static boolean sendInvoice(AuthToken token, Client client, List<ContactMethod> priority, String data) {
         return buildChain(priority).sendInvoice(token, client, data);
     }
+
     public static List<String> getKnownMethods() {
         return Arrays.asList(
                 "Carrier Pigeon",
