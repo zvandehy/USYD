@@ -34,6 +34,7 @@ public class RegularWorkType implements WorkType {
         return sb.toString();
     }
 
+
     @Override
     public String generateDescription(Report report, int employeeCount) {
         StringBuilder reportSB = new StringBuilder();

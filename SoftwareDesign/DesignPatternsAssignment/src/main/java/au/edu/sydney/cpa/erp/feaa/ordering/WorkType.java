@@ -7,4 +7,6 @@ public interface WorkType {
     double calculateReportCost(Report report, int employeeCount);
     String generateInvoiceMessage(Report report, int employeeCount);
     String generateDescription(Report report, int employeeCount);
+
+
 }

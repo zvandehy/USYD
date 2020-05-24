@@ -59,18 +59,18 @@ public class FEAAFacade {
         int id = TestDatabase.getInstance().getNextOrderID();
 
         if (isScheduled) {
-            if (1 == orderType) { // 1 is regular accounting
+            if (1 == orderType) {
                 if (isCritical) {
-                    order = new FirstOrderTypeScheduled(id, clientID, date, criticalLoading, maxCountedEmployees, numQuarters);
+                    order = new ScheduledOrderImpl(id, clientID, date, new CriticalPriority(criticalLoading), new RegularWorkType(maxCountedEmployees), numQuarters);//FirstOrderType
                 } else {
-                    order = new Order66Scheduled(id, clientID, date, maxCountedEmployees, numQuarters);
+                    order = new ScheduledOrderImpl(id, clientID, date, new RegularPriority(), new RegularWorkType(maxCountedEmployees), numQuarters);//Order66
                 }
-            } else if (2 == orderType) { // 2 is audit
-                    if (isCritical) {
-                        order = new CriticalAuditOrderScheduled(id, clientID, date, criticalLoading, numQuarters);
-                    } else {
-                        order = new NewOrderImplScheduled(id, clientID, date, numQuarters);
-                    }
+            } else if (2 == orderType) {
+                if (isCritical) {
+                    order = new ScheduledOrderImpl(id, clientID, date, new CriticalPriority(criticalLoading), new AuditWorkType(), numQuarters);//CriticalAuditOrder
+                } else {
+                    order = new ScheduledOrderImpl(id, clientID, date, new RegularPriority(), new AuditWorkType(), numQuarters);//NewOrderImpl
+                }
             } else {return null;}
         } else {
             if (1 == orderType) {

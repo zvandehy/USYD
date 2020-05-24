@@ -15,8 +15,8 @@ public class OrderImpl implements Order {
     private LocalDateTime date;
     private int clientID;
     private boolean finalised = false;
-    private PriorityType priorityType;
-    private WorkType workType;
+    protected PriorityType priorityType;
+    protected WorkType workType;
 
     public OrderImpl(int id, int clientID, LocalDateTime date, PriorityType priorityType, WorkType workType) {
         this.id = id;
@@ -79,9 +79,11 @@ public class OrderImpl implements Order {
 
     @Override
     public String generateInvoiceData() {
-        String result = priorityType.generateInvoiceMessage(getTotalCommission());
+        return priorityType.generateInvoiceMessage(getTotalCommission(), getReportsInvoiceData());
+    }
 
-        if(priorityType instanceof CriticalPriority) return result;
+    protected String getReportsInvoiceData() {
+        String result = "";
 
         List<Report> keyList = new ArrayList<>(reports.keySet());
         keyList.sort(Comparator.comparing(Report::getReportName).thenComparing(Report::getCommission));
@@ -145,5 +147,13 @@ public class OrderImpl implements Order {
         result += priorityType.generateDescription(getTotalCommission());
 
         return result;
+    }
+
+    protected Map<Report, Integer> getReports() {
+        return reports;
+    }
+
+    protected boolean isFinalised() {
+        return finalised;
     }
 }
