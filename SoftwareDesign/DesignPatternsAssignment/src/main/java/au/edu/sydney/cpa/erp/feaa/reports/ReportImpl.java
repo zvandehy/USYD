@@ -24,14 +24,9 @@ public class ReportImpl implements Report {
 
     private final String name;
     private final double commissionPerEmployee;
-//    private final double[] legalData;
-//    private final double[] cashFlowData;
-//    private final double[] mergesData;
-//    private final double[] tallyingData;
-//    private final double[] deductionsData;
     private final ReportData data;
 
-    private int hashcode;
+    private final int hashcode;
 
     public ReportImpl(String name,
                       double commissionPerEmployee,
@@ -40,18 +35,10 @@ public class ReportImpl implements Report {
                       double[] mergesData,
                       double[] tallyingData,
                       double[] deductionsData) {
-        //flyweight is ReportData object
-        //ReportData data = factory.getData(double[]...)
-        //this.legalData = data.legalData;
         this.data = ReportDataFactory.getReportData(legalData, cashFlowData, mergesData, tallyingData, deductionsData);
         this.name = name;
         this.commissionPerEmployee = commissionPerEmployee;
-//        this.legalData = data.getLegalData();
-//        this.cashFlowData = data.getCashFlowData();
-//        this.mergesData = data.getMergesData();
-//        this.tallyingData = data.getTallyingData();
-//        this.deductionsData = deductionsData;
-        hashcode = hashCode();
+        this.hashcode = hashCode();
     }
 
     @Override
@@ -65,28 +52,26 @@ public class ReportImpl implements Report {
     }
 
     @Override
-    public double[] getLegalData() {
-        return data.getLegalData().clone();
-    }
+    public double[] getLegalData() { return data.getLegalData(); }
 
     @Override
     public double[] getCashFlowData() {
-        return data.getCashFlowData().clone();
+        return data.getCashFlowData();
     }
 
     @Override
     public double[] getMergesData() {
-        return data.getMergesData().clone();
+        return data.getMergesData();
     }
 
     @Override
     public double[] getTallyingData() {
-        return data.getTallyingData().clone();
+        return data.getTallyingData();
     }
 
     @Override
     public double[] getDeductionsData() {
-        return data.getDeductionsData().clone();
+        return data.getDeductionsData();
     }
 
     @Override
@@ -107,12 +92,13 @@ public class ReportImpl implements Report {
         ReportImpl report = (ReportImpl) o;
         return Double.compare(report.commissionPerEmployee, commissionPerEmployee) == 0 &&
                 name.equals(report.name) &&
-                data.equals(report.data);
+                data.equals(report.data); //technically, this could be replaced with data == report.data because the factory ensures that if they are equal, then they would be the same object (and share their memory address)
     }
 
     @Override
     public int hashCode() {
-        int result = 31 * Objects.hash(name, commissionPerEmployee, data);
-        return result;
+        if(hashcode == 0) {
+            return 31 * Objects.hash(name, commissionPerEmployee, data);
+        } else return hashcode;
     }
 }

@@ -468,7 +468,9 @@ public class CLI {
 
             switch (selection) {
                 case 1:
+                    System.out.println("RAM BEFORE: " + Long.toString(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                     listAllReports();
+                    System.out.println("RAM AFTER : " + Long.toString(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                     selection = -1;
                     break;
                 case 2:

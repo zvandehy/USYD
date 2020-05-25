@@ -49,14 +49,6 @@ public class OrderImpl implements Order {
     @Override
     public void setReport(Report report, int employeeCount) {
         if (finalised) throw new IllegalStateException("Order was already finalised.");
-
-        for (Report contained: reports.keySet()) {
-            if (contained.equals(report)) {
-                report = contained;
-                break;
-            }
-        }
-
         reports.put(report, employeeCount);
     }
 
@@ -67,12 +59,6 @@ public class OrderImpl implements Order {
 
     @Override
     public int getReportEmployeeCount(Report report) {
-        for (Report contained: reports.keySet()) {
-            if (contained.equals(report)) {
-                report = contained;
-                break;
-            }
-        }
         Integer result = reports.get(report);
         return null == result ? 0 : result;
     }

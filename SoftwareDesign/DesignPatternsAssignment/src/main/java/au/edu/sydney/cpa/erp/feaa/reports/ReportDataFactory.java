@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReportDataFactory {
-    public static List<ReportData> cachedData = new ArrayList<>();
+    private static List<ReportData> cachedData = new ArrayList<>();
     public static ReportData getReportData(double[] legalData,
                                            double[] cashFlowData,
                                            double[] mergesData,

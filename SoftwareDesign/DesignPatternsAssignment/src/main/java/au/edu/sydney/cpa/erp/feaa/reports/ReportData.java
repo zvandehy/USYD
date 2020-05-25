@@ -13,39 +13,39 @@ public class ReportData {
     private final double[] tallyingData;
     private final double[] deductionsData;
 
-    private int hashcode;
+    private final int hashcode;
 
     public ReportData(double[] legalData,
                       double[] cashFlowData,
                       double[] mergesData,
                       double[] tallyingData,
                       double[] deductionsData) {
-        this.legalData = legalData;
-        this.cashFlowData = cashFlowData;
-        this.mergesData = mergesData;
-        this.tallyingData = tallyingData;
-        this.deductionsData = deductionsData;
+        this.legalData = legalData.clone();
+        this.cashFlowData = cashFlowData.clone();
+        this.mergesData = mergesData.clone();
+        this.tallyingData = tallyingData.clone();
+        this.deductionsData = deductionsData.clone();
         hashcode = hashCode();
     }
 
     public double[] getLegalData() {
-        return legalData;
+        return legalData.clone();
     }
 
     public double[] getCashFlowData() {
-        return cashFlowData;
+        return cashFlowData.clone();
     }
 
     public double[] getMergesData() {
-        return mergesData;
+        return mergesData.clone();
     }
 
     public double[] getTallyingData() {
-        return tallyingData;
+        return tallyingData.clone();
     }
 
     public double[] getDeductionsData() {
-        return deductionsData;
+        return deductionsData.clone();
     }
 
 
@@ -69,11 +69,14 @@ public class ReportData {
 
     @Override
     public int hashCode() {
-        int result = Arrays.hashCode(legalData);
-        result = 31 * result + Arrays.hashCode(cashFlowData);
-        result = 31 * result + Arrays.hashCode(mergesData);
-        result = 31 * result + Arrays.hashCode(tallyingData);
-        result = 31 * result + Arrays.hashCode(deductionsData);
-        return result;
+        if(this.hashcode == 0) {
+            int result = Arrays.hashCode(legalData);
+            result = 31 * result + Arrays.hashCode(cashFlowData);
+            result = 31 * result + Arrays.hashCode(mergesData);
+            result = 31 * result + Arrays.hashCode(tallyingData);
+            result = 31 * result + Arrays.hashCode(deductionsData);
+            return result;
+        }
+        else return hashcode;
     }
 }
