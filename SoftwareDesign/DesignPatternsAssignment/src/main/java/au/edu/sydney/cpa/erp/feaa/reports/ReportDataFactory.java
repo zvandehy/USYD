@@ -2,7 +2,6 @@ package au.edu.sydney.cpa.erp.feaa.reports;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class ReportDataFactory {
     public static List<ReportData> cachedData = new ArrayList<>();
