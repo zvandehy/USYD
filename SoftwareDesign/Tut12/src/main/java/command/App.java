@@ -6,7 +6,5 @@ public class App {
         Invoker heaterController = new Invoker(myHeater);
         heaterController.run("SwitchOn", null);
         heaterController.run("SwitchOff", null);
-
-
     }
 }
