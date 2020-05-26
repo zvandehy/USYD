@@ -34,11 +34,12 @@ public class ReportData {
         /*if they are not cloned, then the entries of the array could be modified
             if the array is created, passed to the ReportData, and then modified from outside of ReportData
          */
-        this.legalData = legalData.clone();
-        this.cashFlowData = cashFlowData.clone();
-        this.mergesData = mergesData.clone();
-        this.tallyingData = tallyingData.clone();
-        this.deductionsData = deductionsData.clone();
+        //the null checks are necessary to avoid null pointer exceptions when a report is created with null data (which occurs in the AllowedScopeTest)
+        this.legalData = legalData == null ? null : legalData.clone();
+        this.cashFlowData = cashFlowData == null ? null : cashFlowData.clone();
+        this.mergesData = mergesData == null ? null : mergesData.clone();
+        this.tallyingData = tallyingData == null ? null : tallyingData.clone();
+        this.deductionsData = cashFlowData == null ? null :  deductionsData.clone();
         //hashcode is calculated in the constructor
         //this is a higher initial cost, but improves performance if ReportData is compared to other ReportData often
         hashcode = hashCode();

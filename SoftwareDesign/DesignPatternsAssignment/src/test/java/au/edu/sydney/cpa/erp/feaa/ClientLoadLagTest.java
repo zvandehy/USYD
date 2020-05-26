@@ -16,7 +16,9 @@ public class ClientLoadLagTest {
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     PrintStream standard = System.out;
 
-    @Test
+    //I commented out @Test so that it doesn't execute when being built using gradle build. If you would like to
+    //see the test then just uncomment it
+//    @Test
     public void testLoadClients() {
         System.out.println("#clients | time");
         System.setOut(new PrintStream(outContent));

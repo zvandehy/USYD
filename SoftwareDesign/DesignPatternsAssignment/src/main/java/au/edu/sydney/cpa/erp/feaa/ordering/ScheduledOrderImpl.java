@@ -77,6 +77,8 @@ public class ScheduledOrderImpl extends OrderImpl implements ScheduledOrder {
                 reportSB.toString()
         );
 
+        System.out.println(result);
+
         result += priorityType.generateScheduledDescription(getTotalCommission(), numQuarters);
 
         return result;
