@@ -5,29 +5,29 @@ import au.edu.sydney.cpa.erp.ordering.Report;
 import java.util.Arrays;
 import java.util.Objects;
 
-//We are making a Report a Value Object
-//It is immutable, so all of the data it holds needs to be in immutable lists
-//We will use hashcode to check equality. If there is a collision, then we continue to check equality with the
-//array and other field comparisons. This is more efficient in this context because reports are checked for equality so often.
-//This would be less efficient if creating a report happened more often than checking equality (because we have to go through each list
-//in order to create the hashcode).
-//The getter methods return a clone of the double[]. This is necessary because for the Report to be fully immutable, it should not be possible
-//for a client to change the data inside of the array. In this way, there is a performance cost of implementing the Report as a Value object. However,
-//this is a good solution because the arrays are accessed infrequently enough that it should not have a large impact on performance.
-//Rather, by implementing Report as a Value Object, we simplify the code by allowing reports to be easily compared.
-//In addition, because of the use of hashcode in the equals method, the performance benefit from not needing to make so many comparisons
-//to each double[] (and checking the hashcode first), outweighs the cost of cloning the data in the getters (in this domain) because reports
-//are frequently compared with each other. It is worth noting that this benefit is more significant when more reports that are *not* equal are
-//compared to each other. This is because all of the arrays must be compared if the hash codes are equal (small possibility to share hashcode but not be equal).
-
+/**
+ * ReportImpl is the context object for the Flyweight Pattern. It implements the Report interface.
+ */
 public class ReportImpl implements Report {
 
     private final String name;
     private final double commissionPerEmployee;
     private final ReportData data;
 
+    //hashcode is saved so that it can be used in the equals() method without recomputing the hashCode
+    //it acts similarly to a primary key, but not exactly the same
     private final int hashcode;
 
+    /**
+     * Create a ReportImpl
+     * @param name - name of report
+     * @param commissionPerEmployee - commission per employee in report
+     * @param legalData - legal data of report
+     * @param cashFlowData - cash flow data of report
+     * @param mergesData - merges data of report
+     * @param tallyingData - tallying data of report
+     * @param deductionsData - deductions data of report
+     */
     public ReportImpl(String name,
                       double commissionPerEmployee,
                       double[] legalData,
@@ -35,9 +35,13 @@ public class ReportImpl implements Report {
                       double[] mergesData,
                       double[] tallyingData,
                       double[] deductionsData) {
+        //use ReportDataFactory to create the ReportData flyweights
         this.data = ReportDataFactory.getReportData(legalData, cashFlowData, mergesData, tallyingData, deductionsData);
         this.name = name;
         this.commissionPerEmployee = commissionPerEmployee;
+        //hashcode is calculated in the constructor
+        //this is a higher initial cost, but improves performance if Report is compared to other Reports often
+        //also acts similarly to primary key
         this.hashcode = hashCode();
     }
 
@@ -50,6 +54,9 @@ public class ReportImpl implements Report {
     public double getCommission() {
         return commissionPerEmployee;
     }
+
+    //there is no getter for the ReportData
+    //instead there are getters for all of the data in the report data (as specified in the Report interface)
 
     @Override
     public double[] getLegalData() { return data.getLegalData(); }
@@ -97,8 +104,9 @@ public class ReportImpl implements Report {
 
     @Override
     public int hashCode() {
+        //if hashcode hasn't been initialized then calculate it
         if(hashcode == 0) {
             return 31 * Objects.hash(name, commissionPerEmployee, data);
-        } else return hashcode;
+        } else return hashcode; //otherwise just return
     }
 }

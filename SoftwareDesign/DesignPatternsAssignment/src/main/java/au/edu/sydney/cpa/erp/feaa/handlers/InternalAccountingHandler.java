@@ -4,6 +4,9 @@ import au.edu.sydney.cpa.erp.auth.AuthToken;
 import au.edu.sydney.cpa.erp.contact.InternalAccounting;
 import au.edu.sydney.cpa.erp.ordering.Client;
 
+/**
+ * Concrete handler for Internal Accounting
+ */
 public class InternalAccountingHandler implements ContactMethod {
     private ContactMethod next;
     @Override

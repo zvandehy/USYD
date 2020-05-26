@@ -4,6 +4,9 @@ import au.edu.sydney.cpa.erp.auth.AuthToken;
 import au.edu.sydney.cpa.erp.contact.Email;
 import au.edu.sydney.cpa.erp.ordering.Client;
 
+/**
+ * Concrete Handler for Email
+ */
 public class EmailHandler implements ContactMethod {
     private ContactMethod next;
     @Override

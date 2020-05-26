@@ -6,13 +6,22 @@ import au.edu.sydney.cpa.erp.ordering.Client;
 
 import java.util.HashMap;
 
+/**
+ * ClientImpl implements the Client interface. Utilizes Lazy Loading to increase performance when a Client doesn't need to use all of the client fields.
+ */
 public class ClientImpl implements Client {
 
+    //these fields are used to create the ClientImpl
+
     private final int id;
+    //need to store token in order to make calls to database "later" (lazy loading)
     private AuthToken token;
 
+    //need to store boolean "isLoaded value" for each field in the map
+    //because null values are acceptable field values
     private HashMap<String, Boolean> loadedFields;
 
+    //client fields
     private String fName;
     private String lName;
     private String phoneNumber;
@@ -25,11 +34,17 @@ public class ClientImpl implements Client {
     private String businessName;
     private String pigeonCoopID;
 
+    /**
+     * Create a Client. Wait to initialize client fields. Set isLoaded values to false for all fields. Save the Authtoken.
+     * @param token - the token to authorize access to the client database
+     * @param id - the id of the client
+     */
     public ClientImpl(AuthToken token, int id) {
 
         this.id = id;
         this.token = token;
 
+        //initialize each field to false
         loadedFields = new HashMap<>();
         loadedFields.put("fName", false);
         loadedFields.put("lName", false);
@@ -50,10 +65,14 @@ public class ClientImpl implements Client {
 
     @Override
     public String getFName() {
+        //check isLoaded value in map for fName
         if(!loadedFields.get("fName")) {
+            //if not loaded yet, then get that field from the database (should take 1 sec)
             this.fName = TestDatabase.getInstance().getClientField(token, id, "fName");
+            //now that the field has been loaded, set the value in the map to true
             loadedFields.put("fName", true);
         }
+        //return fName (doesn't matter if it was just loaded or has been loaded before)
         return fName;
     }
 

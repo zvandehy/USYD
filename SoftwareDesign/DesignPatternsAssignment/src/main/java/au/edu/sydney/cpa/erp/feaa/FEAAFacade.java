@@ -106,6 +106,18 @@ public class FEAAFacade {
             throw new SecurityException();
         }
 
+        /*
+        I recommend making some kind of change to this method so that Lazy Loading can be fully utilized.
+        For example, as it is now the CLI.viewClientMenu() method checks if the client returned by this method is null.
+        If it is null, then it stops executing. Otherwise, it gets *all* of the client fields for that client.
+        However, since this method never returns null, the viewClientMenu() always requests all of the client fields,
+        even if the id is invalid. This means that the user always has to wait the 11 seconds it takes to get request those fields.
+        If this method could return null by either doing a check like shown below, or another method not shown here, then those 11 wasted
+        seconds could be avoided (because lazy loading waits to access those fields!).
+         */
+//        if(!TestDatabase.getInstance().getClientIDs(token).contains(id)) {
+//            return null;
+//        }
         return new ClientImpl(token, id);
     }
 
@@ -131,12 +143,14 @@ public class FEAAFacade {
             throw new SecurityException();
         }
 
+        //list of ContactMethods will be put into chain later
         List<ContactMethod> contactHandlers = new ArrayList<>();
 
         if (null != contactPriority) {
             for (String method: contactPriority) {
                 switch (method.toLowerCase()) {
                     case "internal accounting":
+                        //changed these from enum to their respective Concrete Class
                         contactHandlers.add(new InternalAccountingHandler());
                         break;
                     case "email":

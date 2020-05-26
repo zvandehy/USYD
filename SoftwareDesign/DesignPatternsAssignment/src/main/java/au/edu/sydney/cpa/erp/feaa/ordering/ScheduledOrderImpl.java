@@ -61,7 +61,7 @@ public class ScheduledOrderImpl extends OrderImpl implements ScheduledOrder {
         keyList.sort(Comparator.comparing(Report::getReportName).thenComparing(Report::getCommission));
 
         for (Report report : keyList) {
-            reportSB.append(workType.generateDescription(report, getReports().get(report)));
+            reportSB.append(workType.generateReportDescription(report, getReports().get(report)));
 
         }
 

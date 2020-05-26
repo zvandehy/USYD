@@ -4,6 +4,9 @@ import au.edu.sydney.cpa.erp.auth.AuthToken;
 import au.edu.sydney.cpa.erp.contact.SMS;
 import au.edu.sydney.cpa.erp.ordering.Client;
 
+/**
+ * Concrete handler for SMS
+ */
 public class SMSHandler implements ContactMethod {
     private ContactMethod next;
     @Override
